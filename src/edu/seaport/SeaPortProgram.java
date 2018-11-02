@@ -12,12 +12,13 @@ public class SeaPortProgram extends JFrame {
     private JFrame frame;
     private JButton fileReadBtn, searchBtn;
     private JTextArea textOutput;
+    private TextField searchBox;
 
     private SeaPortProgram() {
 
         this.createGui();
 
-        fileReadBtn.addActionListener(e -> parseFile());
+        this.fileReadBtn.addActionListener(e -> parseFile());
 
     }
 
@@ -42,39 +43,48 @@ public class SeaPortProgram extends JFrame {
 
     private void createGui() {
 
-        frame = new JFrame("SeaPort Program");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(400, 300));
+        this.frame = new JFrame("SeaPort Program");
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.frame.setPreferredSize(new Dimension(600, 600));
 
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panelTop = new JPanel(new GridLayout(1, 5, 5, 5));
 
-        BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.Y_AXIS);
-        panel.setLayout(boxlayout);
+        this.fileReadBtn = new JButton("Select File");
+        this.searchBtn = new JButton("Search");
 
-        fileReadBtn = new JButton("Select File");
-        searchBtn = new JButton("Search");
 
-        //TODO: Add search input field
-
+        JLabel searchBoxLabel = new JLabel("Search:", JLabel.RIGHT);
+        this.searchBox = new TextField();
+        this.searchBox = new TextField("", 10);
 
         //TODO: add dropdown search parameters
 
-        textOutput = new JTextArea();
-        textOutput.setEditable(false);
-        textOutput.setFont (new java.awt.Font ("Monospaced", Font.PLAIN, 12));
-        textOutput.setLineWrap(true);
+
+
+        // Main text output area styling
+        this.textOutput = new JTextArea();
+        this.textOutput.setEditable(false);
+        this.textOutput.setFont (new java.awt.Font ("Monospaced", Font.PLAIN, 12));
+        this.textOutput.setLineWrap(true);
 
         //TODO: Add split plane when searching
 
         JScrollPane scrollPane = new JScrollPane(textOutput);
 
-        panel.add(fileReadBtn);
-        panel.add(searchBtn);
-        panel.add(scrollPane);
+        // Panel for the top menu bar
+        panelTop.add(fileReadBtn);
+        panelTop.add(searchBoxLabel);
+        panelTop.add(searchBox);
+        panelTop.add(searchBtn);
 
-        frame.add(panel);
-        frame.pack();
-        frame.setVisible(true);
+
+        panel.add(scrollPane, BorderLayout.CENTER);
+        panel.add(panelTop, BorderLayout.NORTH);
+
+        this.frame.add(panel);
+        this.frame.pack();
+        this.frame.setVisible(true);
     }
 
 
