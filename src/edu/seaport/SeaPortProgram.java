@@ -3,18 +3,32 @@ package edu.seaport;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.io.FileReader;
+import java.util.Scanner;
 
 public class SeaPortProgram extends JFrame {
 
     private World world;
+    private JFrame frame;
+    private JButton fileReadBtn, searchBtn;
+    private JTextArea textOutput;
 
     private SeaPortProgram() {
 
-        File file = this.getLocalFile();
-        if(file != null) {
-            this.createGui();
-        } else {
-            System.exit(0);
+        this.createGui();
+
+        fileReadBtn.addActionListener(e -> parseFile());
+
+    }
+
+    private void parseFile() {
+        try {
+            FileReader fileReader = new FileReader(this.getLocalFile());
+            Scanner scanner = new Scanner(fileReader);
+            this.world = new World(scanner);
+            this.textOutput.setText(String.format("%s", this.world.toString()));
+        } catch(Exception e) {
+            JOptionPane.showMessageDialog(null, e);
         }
     }
 
@@ -28,18 +42,35 @@ public class SeaPortProgram extends JFrame {
 
     private void createGui() {
 
-        JFrame frame = new JFrame("SeaPort Program");
+        frame = new JFrame("SeaPort Program");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setPreferredSize(new Dimension(400, 300));
 
         JPanel panel = new JPanel();
 
         BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.Y_AXIS);
         panel.setLayout(boxlayout);
 
-        JTextArea exampleText = new JTextArea("Hello World!");
-        exampleText.setFont (new java.awt.Font ("Monospaced", Font.PLAIN, 12));
+        fileReadBtn = new JButton("Select File");
+        searchBtn = new JButton("Search");
 
-        panel.add(exampleText);
+        //TODO: Add search input field
+
+
+        //TODO: add dropdown search parameters
+
+        textOutput = new JTextArea();
+        textOutput.setEditable(false);
+        textOutput.setFont (new java.awt.Font ("Monospaced", Font.PLAIN, 12));
+        textOutput.setLineWrap(true);
+
+        //TODO: Add split plane when searching
+
+        JScrollPane scrollPane = new JScrollPane(textOutput);
+
+        panel.add(fileReadBtn);
+        panel.add(searchBtn);
+        panel.add(scrollPane);
 
         frame.add(panel);
         frame.pack();
@@ -48,7 +79,6 @@ public class SeaPortProgram extends JFrame {
 
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
         new SeaPortProgram();
     }
 }

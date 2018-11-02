@@ -1,7 +1,11 @@
 package edu.seaport;
 
-public class PortTime {
+class PortTime {
 
-    int time;
+    private int time;
+
+    PortTime(int time) {
+        this.time = time;
+    }
 
 }
