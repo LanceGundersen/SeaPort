@@ -18,12 +18,36 @@ public class SeaPort extends Thing {
         persons = new ArrayList<>();
     }
 
+    ArrayList<Dock> getDocks() {
+        return docks;
+    }
+
+    void setDocks(ArrayList<Dock> docks) {
+        this.docks = docks;
+    }
+
     ArrayList<Ship> getShips() {
         return ships;
     }
 
+    void setShips(ArrayList<Ship> ships) {
+        this.ships = ships;
+    }
+
     ArrayList<Ship> getQue() {
         return que;
+    }
+
+    void setQue(ArrayList<Ship> que) {
+        this.que = que;
+    }
+
+    ArrayList<Person> getPersons() {
+        return persons;
+    }
+
+    void setPersons(ArrayList<Person> persons) {
+        this.persons = persons;
     }
 
     public String toString() {

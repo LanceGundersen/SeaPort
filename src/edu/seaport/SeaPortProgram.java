@@ -13,6 +13,8 @@ public class SeaPortProgram extends JFrame {
     private JButton fileReadBtn, searchBtn;
     private JTextArea textOutput;
     private TextField searchBox;
+    private String[] searchOptions;
+    private JComboBox<String> searchDropdown;
 
     private SeaPortProgram() {
 
@@ -59,8 +61,8 @@ public class SeaPortProgram extends JFrame {
         this.searchBox = new TextField("", 10);
 
         //TODO: add dropdown search parameters
-
-
+        this.searchOptions = new String[] {"name", "index", "skill"};
+        this.searchDropdown = new JComboBox<>(this.searchOptions);
 
         // Main text output area styling
         this.textOutput = new JTextArea();
@@ -76,8 +78,8 @@ public class SeaPortProgram extends JFrame {
         panelTop.add(fileReadBtn);
         panelTop.add(searchBoxLabel);
         panelTop.add(searchBox);
+        panelTop.add(searchDropdown);
         panelTop.add(searchBtn);
-
 
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(panelTop, BorderLayout.NORTH);
