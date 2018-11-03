@@ -4,6 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class SeaPortProgram extends JFrame {
@@ -21,7 +24,100 @@ public class SeaPortProgram extends JFrame {
         this.createGui();
 
         this.fileReadBtn.addActionListener(e -> parseFile());
+        this.searchBtn.addActionListener(e -> searchParsedWorld(searchBox.getText().trim(), searchDropdown.getSelectedIndex()));
 
+    }
+
+    private void searchParsedWorld(String searchText, int dropdownIndex) {
+
+        String searchResults = null;
+
+        // Check if world is populated.
+        if(this.world != null) {
+
+            // Check if the search box is empty or if the dropdown is unselected.
+            if (!searchText.equals("") && dropdownIndex != 0) {
+
+                switch(dropdownIndex) {
+                    case 1: // By name
+                        searchResults = this.worldSearchResults(searchText, dropdownIndex);
+                    case 2: // By index
+                        searchResults = this.worldSearchResults(searchText, dropdownIndex);
+                        break;
+                    case 3: // By skill
+                        searchResults = this.worldSearchResults(searchText, dropdownIndex);
+                        break;
+                    default:
+                        break;
+                }
+
+                System.out.println(searchResults);
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Search text or dropdown selection missing!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Please choose a file!");
+        }
+
+    }
+
+    private String worldSearchResults(String searchText, int dropdownIndex) {
+
+        StringBuilder results = new StringBuilder();
+        Method getParam = null;
+
+        if(dropdownIndex != 3) {
+            try {
+                switch(dropdownIndex) {
+                    case 1:
+                        getParam = Thing.class.getDeclaredMethod("getName");
+                        break;
+                    case 2:
+                        getParam = Thing.class.getDeclaredMethod("getIndex");
+                        break;
+                }
+
+                for (Thing item : this.world.getAllThings()) {
+
+                    String parameter = getParam.invoke(item).toString();
+
+                    if (parameter.equals(searchText)) {
+                        results.append(item.getName());
+                        results.append(" ");
+                        results.append(item.getIndex());
+                        results.append(" (");
+                        results.append(item.getClass().getSimpleName());
+                        results.append(")\n");
+                    }
+                }
+            } catch (
+                    NoSuchMethodException |
+                            SecurityException |
+                            IllegalAccessException |
+                            IllegalArgumentException |
+                            InvocationTargetException ex
+            ) {
+                System.out.println("Error: " + ex);
+            }
+        } else {
+
+            for (SeaPort port : this.world.getPorts()) {
+
+                for (Person person : port.getPersons()) {
+
+                    if (person.getSkill().equals(searchText)) {
+
+                        results.append(person.getName());
+                        results.append(" (id #");
+                        results.append(person.getIndex());
+                        results.append(")\n");
+                    }
+                }
+            }
+        }
+
+        return results.toString();
     }
 
     private void parseFile() {
@@ -60,8 +156,7 @@ public class SeaPortProgram extends JFrame {
         this.searchBox = new TextField();
         this.searchBox = new TextField("", 10);
 
-        //TODO: add dropdown search parameters
-        this.searchOptions = new String[] {"name", "index", "skill"};
+        this.searchOptions = new String[] {"", "name", "index", "skill"};
         this.searchDropdown = new JComboBox<>(this.searchOptions);
 
         // Main text output area styling

@@ -27,11 +27,11 @@ public class World extends Thing {
         this.ports = ports;
     }
 
-    private ArrayList<Thing> getAllThings() {
+    ArrayList<Thing> getAllThings() {
         return this.allThings;
     }
 
-    private ArrayList<SeaPort> getPorts() {
+    ArrayList<SeaPort> getPorts() {
         return this.ports;
     }
 
