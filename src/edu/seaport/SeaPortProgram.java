@@ -6,17 +6,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class SeaPortProgram extends JFrame {
 
     private World world;
-    private JFrame frame;
     private JButton fileReadBtn, searchBtn;
     private JTextArea textOutput;
     private TextField searchBox;
-    private String[] searchOptions;
     private JComboBox<String> searchDropdown;
 
     private SeaPortProgram() {
@@ -28,36 +25,40 @@ public class SeaPortProgram extends JFrame {
 
     }
 
+    public static void main(String[] args) {
+        new SeaPortProgram();
+    }
+
     private void searchParsedWorld(String searchText, int dropdownIndex) {
 
-        String searchResults = null;
-
         // Check if world is populated.
-        if(this.world != null) {
+        if (this.world != null) {
 
+            String results = "";
             // Check if the search box is empty or if the dropdown is unselected.
             if (!searchText.equals("") && dropdownIndex != 0) {
 
-                switch(dropdownIndex) {
+                switch (dropdownIndex) {
                     case 1: // By name
-                        searchResults = this.worldSearchResults(searchText, dropdownIndex);
                     case 2: // By index
-                        searchResults = this.worldSearchResults(searchText, dropdownIndex);
+                        results = worldSearchResults(searchText, dropdownIndex);
                         break;
                     case 3: // By skill
-                        searchResults = this.worldSearchResults(searchText, dropdownIndex);
-                        break;
-                    default:
+                        results = this.worldSearchResults(searchText, dropdownIndex);
                         break;
                 }
 
-                System.out.println(searchResults);
+                if (results.equals("")) {
+                    JOptionPane.showMessageDialog(null, "Sorry, " + searchText + " not found!", "Search Results", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, results, "Search Results", JOptionPane.INFORMATION_MESSAGE);
+                }
 
             } else {
-                JOptionPane.showMessageDialog(null, "Search text or dropdown selection missing!");
+                JOptionPane.showMessageDialog(null, "Search text or dropdown selection missing!", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Please choose a file!");
+            JOptionPane.showMessageDialog(null, "Please choose a file!", "Error", JOptionPane.ERROR_MESSAGE);
         }
 
     }
@@ -67,9 +68,9 @@ public class SeaPortProgram extends JFrame {
         StringBuilder results = new StringBuilder();
         Method getParam = null;
 
-        if(dropdownIndex != 3) {
+        if (dropdownIndex != 3) {
             try {
-                switch(dropdownIndex) {
+                switch (dropdownIndex) {
                     case 1:
                         getParam = Thing.class.getDeclaredMethod("getName");
                         break;
@@ -80,6 +81,7 @@ public class SeaPortProgram extends JFrame {
 
                 for (Thing item : this.world.getAllThings()) {
 
+                    assert getParam != null;
                     String parameter = getParam.invoke(item).toString();
 
                     if (parameter.equals(searchText)) {
@@ -98,7 +100,7 @@ public class SeaPortProgram extends JFrame {
                             IllegalArgumentException |
                             InvocationTargetException ex
             ) {
-                System.out.println("Error: " + ex);
+                JOptionPane.showMessageDialog(null, "Error: " + ex, "Program Error", JOptionPane.ERROR_MESSAGE);
             }
         } else {
 
@@ -125,9 +127,10 @@ public class SeaPortProgram extends JFrame {
             FileReader fileReader = new FileReader(this.getLocalFile());
             Scanner scanner = new Scanner(fileReader);
             this.world = new World(scanner);
-            this.textOutput.setText(String.format("%s", this.world.toString()));
-        } catch(Exception e) {
-            JOptionPane.showMessageDialog(null, e);
+            this.textOutput.setText(this.world.toString());
+        } catch (Exception e) {
+            //TODO: Account for file not being chosen vs. file error.
+            System.out.println("ParseFile Exception: " + e);
         }
     }
 
@@ -138,12 +141,11 @@ public class SeaPortProgram extends JFrame {
         return fileChooser.getSelectedFile();
     }
 
-
     private void createGui() {
 
-        this.frame = new JFrame("SeaPort Program");
-        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.frame.setPreferredSize(new Dimension(600, 600));
+        JFrame frame = new JFrame("SeaPort Program");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setPreferredSize(new Dimension(600, 600));
 
         JPanel panel = new JPanel(new BorderLayout());
         JPanel panelTop = new JPanel(new GridLayout(1, 5, 5, 5));
@@ -156,36 +158,29 @@ public class SeaPortProgram extends JFrame {
         this.searchBox = new TextField();
         this.searchBox = new TextField("", 10);
 
-        this.searchOptions = new String[] {"", "name", "index", "skill"};
-        this.searchDropdown = new JComboBox<>(this.searchOptions);
+        String[] searchOptions = new String[]{"", "name", "index", "skill"};
+        this.searchDropdown = new JComboBox<>(searchOptions);
 
         // Main text output area styling
         this.textOutput = new JTextArea();
         this.textOutput.setEditable(false);
-        this.textOutput.setFont (new java.awt.Font ("Monospaced", Font.PLAIN, 12));
+        this.textOutput.setFont(new java.awt.Font("Monospaced", Font.PLAIN, 12));
         this.textOutput.setLineWrap(true);
-
-        //TODO: Add split plane when searching
 
         JScrollPane scrollPane = new JScrollPane(textOutput);
 
         // Panel for the top menu bar
-        panelTop.add(fileReadBtn);
+        panelTop.add(this.fileReadBtn);
         panelTop.add(searchBoxLabel);
-        panelTop.add(searchBox);
-        panelTop.add(searchDropdown);
-        panelTop.add(searchBtn);
+        panelTop.add(this.searchBox);
+        panelTop.add(this.searchDropdown);
+        panelTop.add(this.searchBtn);
 
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(panelTop, BorderLayout.NORTH);
 
-        this.frame.add(panel);
-        this.frame.pack();
-        this.frame.setVisible(true);
-    }
-
-
-    public static void main(String[] args) {
-        new SeaPortProgram();
+        frame.add(panel);
+        frame.pack();
+        frame.setVisible(true);
     }
 }

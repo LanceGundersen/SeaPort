@@ -9,7 +9,6 @@ public class World extends Thing {
 
     private ArrayList<Thing> allThings;
     private ArrayList<SeaPort> ports;
-    private PortTime time;
 
 
     World(Scanner scannerContents) {
