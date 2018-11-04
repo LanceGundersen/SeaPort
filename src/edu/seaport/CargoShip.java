@@ -2,20 +2,25 @@ package edu.seaport;
 
 import java.util.Scanner;
 
-public class CargoShip extends Ship {
+/**
+ * File CargoShip.java
+ * As the project progresses the class will be added to.
+ * @author Lance Gundersen
+ * @version 1.0
+ * @since 2018-11-03
+ *
+ */
+class CargoShip extends Ship {
 
-    private double cargoValue;
-    private double cargoVolume;
-    private double cargoWeight;
-
-    CargoShip(Scanner sc) {
-        super(sc);
-        cargoWeight = sc.nextDouble();
-        cargoVolume = sc.nextDouble();
-        cargoValue = sc.nextDouble();
+    /**
+     * Default Constructor.
+     * @param scannerContents is the file contents to be scanned.
+     * @return Nothing.
+     */
+    CargoShip(Scanner scannerContents) {
+        super(scannerContents);
     }
 
-    @Override
     public String toString() {
         return "Cargo Ship: " + getName() + " " + getIndex();
     }

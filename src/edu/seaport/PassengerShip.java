@@ -2,25 +2,31 @@ package edu.seaport;
 
 import java.util.Scanner;
 
-public class PassengerShip extends Ship {
+/**
+ * File PassengerShip.java
+ * As the project progresses the class will be added to.
+ * @author Lance Gundersen
+ * @version 1.0
+ * @since 2018-11-03
+ *
+ */
+class PassengerShip extends Ship {
 
-    private int numberOfOccupiedRooms;
-    private int numberOfPassengers;
-    private int numberOfRooms;
-
-    PassengerShip (Scanner sc) {
-        super (sc);
-        if (sc.hasNextInt()) numberOfPassengers = sc.nextInt();
-        if (sc.hasNextInt()) numberOfRooms = sc.nextInt();
-        if (sc.hasNextInt()) numberOfOccupiedRooms = sc.nextInt();
+    /**
+     * Default Constructor.
+     * @param scannerContents is the file contents to be scanned.
+     * @return Nothing.
+     */
+    PassengerShip(Scanner scannerContents) {
+        super(scannerContents);
     }
 
-    public String toString () {
-        StringBuilder st = new StringBuilder("Passenger ship: " + super.toString());
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder("Passenger ship: " + super.toString());
         if (getJobs().size() == 0)
-            return st.toString();
-        for (Job mj: getJobs()) st.append("\n       - ").append(mj);
-        return st.toString();
+            return stringBuilder.toString();
+        for (Job job : getJobs()) stringBuilder.append("\n       - ").append(job);
+        return stringBuilder.toString();
     }
 
 }

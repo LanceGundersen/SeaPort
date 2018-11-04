@@ -4,9 +4,22 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Scanner;
+
+import static javax.swing.JOptionPane.showMessageDialog;
+
+/**
+ * File SeaPortProgram.java
+ * The SeaPortProgram implements an application that displays a GUI, allows a user to import a world file and
+ * the user to scan said world file.
+ * @author Lance Gundersen
+ * @version 1.0
+ * @since 2018-11-03
+ *
+ */
 
 public class SeaPortProgram extends JFrame {
 
@@ -16,73 +29,84 @@ public class SeaPortProgram extends JFrame {
     private TextField searchBox;
     private JComboBox<String> searchDropdown;
 
+    /**
+     * Default Constructor which creates the GUI along with providing click handlers for reading in a file and
+     * initializing world searching.
+     * @return Nothing.
+     */
     private SeaPortProgram() {
 
         this.createGui();
-
-        this.fileReadBtn.addActionListener(e -> parseFile());
-        this.searchBtn.addActionListener(e -> searchParsedWorld(searchBox.getText().trim(), searchDropdown.getSelectedIndex()));
+        this.fileReadBtn.addActionListener(e -> scanFile());
+        this.searchBtn.addActionListener(e -> searchBuilder(searchBox.getText().trim(), searchDropdown.getSelectedIndex()));
 
     }
 
+    /**
+     * This is the main method which calls the SeaPortProgram constructor.
+     * @param args Unused.
+     * @return Nothing.
+     */
     public static void main(String[] args) {
         new SeaPortProgram();
     }
 
-    private void searchParsedWorld(String searchText, int dropdownIndex) {
-
-        // Check if world is populated.
+    /**
+     * This method handles basic user input validation by ensuring the world isn't null along with handling
+     * failed search results gracefully.
+     * @param searchText is the search text passed in by the action listener in the constructor.
+     *                   Has null checking to catch empty strings.
+     * @param dropdownIndex is the number value of the array option in the array list {0 = not used, 1 = name,
+     *                      2 = index, 3 = skill}
+     * @return Nothing.
+     */
+    private void searchBuilder(String searchText, int dropdownIndex) {
+        // Check if world has data.
         if (this.world != null) {
 
-            String results = "";
             // Check if the search box is empty or if the dropdown is unselected.
             if (!searchText.equals("") && dropdownIndex != 0) {
 
-                switch (dropdownIndex) {
-                    case 1: // By name
-                    case 2: // By index
-                        results = worldSearchResults(searchText, dropdownIndex);
-                        break;
-                    case 3: // By skill
-                        results = this.worldSearchResults(searchText, dropdownIndex);
-                        break;
-                }
+                String results = this.worldSearch(searchText, dropdownIndex);
 
-                if (results.equals("")) {
-                    JOptionPane.showMessageDialog(null, "Sorry, " + searchText + " not found!", "Search Results", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(null, results, "Search Results", JOptionPane.INFORMATION_MESSAGE);
-                }
-
-            } else {
-                JOptionPane.showMessageDialog(null, "Search text or dropdown selection missing!", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "Please choose a file!", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+                if (results.equals(""))
+                    showMessageDialog(null, "Sorry, " + searchText + " not found!", "Search Results", JOptionPane.INFORMATION_MESSAGE);
+                else showMessageDialog(null, results, "Search Results", JOptionPane.INFORMATION_MESSAGE);
+            } else
+                showMessageDialog(null, "Search text or dropdown selection missing!", "Error", JOptionPane.ERROR_MESSAGE);
+        } else showMessageDialog(null, "Please choose a file!", "Error", JOptionPane.ERROR_MESSAGE);
 
     }
 
-    private String worldSearchResults(String searchText, int dropdownIndex) {
+    /**
+     * This method searches the world for strings and ints based on the search option type passed via
+     * the GUI dropdown. It returns a set(s) of things or people based on search option passed.
+     * @param searchText is the search text passed in by the action listener in the constructor.
+     *                   Has null checking to catch empty strings.
+     * @param dropdownIndex is the number value of the array option in the array list {0 = not used, 1 = name,
+     *                      2 = index, 3 = skill}
+     * @return String of parsed values related to input searchText.
+     */
+    private String worldSearch(String searchText, int dropdownIndex) {
 
         StringBuilder results = new StringBuilder();
-        Method getParam = null;
+        Method method = null;
 
-        if (dropdownIndex != 3) {
+        if (dropdownIndex != 3) { // If the option selected is 1 or 2 then return name, index and class.
             try {
                 switch (dropdownIndex) {
                     case 1:
-                        getParam = Thing.class.getDeclaredMethod("getName");
+                        method = Thing.class.getDeclaredMethod("getName");
                         break;
                     case 2:
-                        getParam = Thing.class.getDeclaredMethod("getIndex");
+                        method = Thing.class.getDeclaredMethod("getIndex");
                         break;
                 }
 
-                for (Thing item : this.world.getAllThings()) {
+                for (Thing item : this.world.getWorld()) {
 
-                    assert getParam != null;
-                    String parameter = getParam.invoke(item).toString();
+                    assert method != null;
+                    String parameter = method.invoke(item).toString();
 
                     if (parameter.equals(searchText)) {
                         results.append(item.getName());
@@ -100,9 +124,9 @@ public class SeaPortProgram extends JFrame {
                             IllegalArgumentException |
                             InvocationTargetException ex
             ) {
-                JOptionPane.showMessageDialog(null, "Error: " + ex, "Program Error", JOptionPane.ERROR_MESSAGE);
+                showMessageDialog(null, "Error: " + ex, "Program Error", JOptionPane.ERROR_MESSAGE);
             }
-        } else {
+        } else { // If the option selected is 3 then return name, and index only.
 
             for (SeaPort port : this.world.getPorts()) {
 
@@ -111,7 +135,7 @@ public class SeaPortProgram extends JFrame {
                     if (person.getSkill().equals(searchText)) {
 
                         results.append(person.getName());
-                        results.append(" (id #");
+                        results.append(" (index #");
                         results.append(person.getIndex());
                         results.append(")\n");
                     }
@@ -122,18 +146,29 @@ public class SeaPortProgram extends JFrame {
         return results.toString();
     }
 
-    private void parseFile() {
+    /**
+     * This method calls getLocalFile method and scans a file defined by the user and outputs it to the GUI and
+     * instantiates a new world. This method could use some better error handling when a user doesn't select a
+     * file and cancels the FileReader.
+     * @return Nothing.
+     */
+    private void scanFile() {
         try {
             FileReader fileReader = new FileReader(this.getLocalFile());
             Scanner scanner = new Scanner(fileReader);
             this.world = new World(scanner);
             this.textOutput.setText(this.world.toString());
-        } catch (Exception e) {
+        } catch (IOException e) {
             //TODO: Account for file not being chosen vs. file error.
             System.out.println("ParseFile Exception: " + e);
         }
     }
 
+    /**
+     * This method opens a fileChooser GUI. This method could
+     * use some better error handling when a user doesn't select a file and cancels the FileReader.
+     * @return a file chosen by the user in the current directory path.
+     */
     private File getLocalFile() {
         JFileChooser fileChooser = new JFileChooser(".");
         fileChooser.showOpenDialog(null);
@@ -141,6 +176,10 @@ public class SeaPortProgram extends JFrame {
         return fileChooser.getSelectedFile();
     }
 
+    /**
+     * This method creates the main GUI for the SeaPort Program. It leverages the BorderLayout.
+     * @return Nothing.
+     */
     private void createGui() {
 
         JFrame frame = new JFrame("SeaPort Program");

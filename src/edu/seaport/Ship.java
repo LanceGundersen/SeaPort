@@ -3,22 +3,31 @@ package edu.seaport;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Ship extends Thing {
+/**
+ * File Ship.java
+ * The ship class contains an array of jobs. As the project progresses the class will be added to.
+ * @author Lance Gundersen
+ * @version 1.0
+ * @since 2018-11-03
+ *
+ */
+class Ship extends Thing {
 
-    private double draft, length, weight, width;
     private ArrayList<Job> jobs;
 
-    Ship(Scanner sc) {
-        super(sc);
-        weight = sc.nextDouble();
-        length = sc.nextDouble();
-        width = sc.nextDouble();
-        draft = sc.nextDouble();
-        jobs = new ArrayList<>();
+    /**
+     * Default Constructor.
+     * @param scannerContents is the file contents to be scanned.
+     * @return Nothing.
+     */
+    Ship(Scanner scannerContents) {
+        super(scannerContents);
+        this.jobs = new ArrayList<>();
     }
 
+    /** Return all jobs list. */
     ArrayList<Job> getJobs() {
-        return jobs;
+        return this.jobs;
     }
 
 }

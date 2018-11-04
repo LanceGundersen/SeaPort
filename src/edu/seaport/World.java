@@ -1,84 +1,109 @@
 package edu.seaport;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class World extends Thing {
+import static javax.swing.JOptionPane.showMessageDialog;
+
+/**
+ * File World.java
+ * The world class creates arrays of things and ports. As the project progresses the class will be added to.
+ * @author Lance Gundersen
+ * @version 1.0
+ * @since 2018-11-03
+ *
+ */
+class World extends Thing {
 
     private ArrayList<Thing> allThings;
     private ArrayList<SeaPort> ports;
 
-
+    /**
+     * Default Constructor which creates the world.
+     * @param scannerContents is the file contents to be scanned.
+     * @return Nothing.
+     */
     World(Scanner scannerContents) {
         super(scannerContents);
-        this.setAllThings(new ArrayList<>());
+        this.setWorld(new ArrayList<>());
         this.setPorts(new ArrayList<>());
         this.process(scannerContents);
     }
 
-    private void setAllThings(ArrayList<Thing> allThings) {
-        this.allThings = allThings;
-    }
-
-    private void setPorts(ArrayList<SeaPort> ports) {
-        this.ports = ports;
-    }
-
-    ArrayList<Thing> getAllThings() {
+    /** Return all things list. */
+    ArrayList<Thing> getWorld() {
         return this.allThings;
     }
 
+    /** Set all things list. */
+    private void setWorld(ArrayList<Thing> allThings) {
+        this.allThings = allThings;
+    }
+
+    /** Return all ports list. */
     ArrayList<SeaPort> getPorts() {
         return this.ports;
     }
 
+    /** Set ports list. */
+    private void setPorts(ArrayList<SeaPort> ports) {
+        this.ports = ports;
+    }
+
+    /**
+     * This method handles scanning of a files contents for populating the world.
+     * @param scannerContents is file contents passed into the world class.
+     * @return Nothing.
+     */
     private void process(Scanner scannerContents) {
 
-        String lineString;
-        Scanner lineContents;
-
         while (scannerContents.hasNextLine()) {
-            lineString = scannerContents.nextLine().trim();
+
+            String lineString = scannerContents.nextLine().trim();
 
             if (lineString.length() == 0) {
                 continue;
             }
 
-            lineContents = new Scanner(lineString);
+            Scanner lineContents = new Scanner(lineString);
 
             if (lineContents.hasNext()) {
 
-                switch(lineContents.next().trim()) {
+                switch (lineContents.next().trim()) {
                     case "port":
                         SeaPort newSeaPort = new SeaPort(lineContents);
-                        this.getAllThings().add(newSeaPort);
+                        this.getWorld().add(newSeaPort);
                         this.getPorts().add(newSeaPort);
                         break;
                     case "dock":
                         Dock newDock = new Dock(lineContents);
-                        this.getAllThings().add(newDock);
+                        this.getWorld().add(newDock);
                         this.addThingToList(newDock, "getDocks");
                         break;
                     case "pship":
                         PassengerShip newPassengerShip = new PassengerShip(lineContents);
-                        this.getAllThings().add(newPassengerShip);
+                        this.getWorld().add(newPassengerShip);
                         this.addShipToParent(newPassengerShip);
                         break;
                     case "cship":
                         CargoShip newCargoShip = new CargoShip(lineContents);
-                        this.getAllThings().add(newCargoShip);
+                        this.getWorld().add(newCargoShip);
                         this.addShipToParent(newCargoShip);
                         break;
                     case "person":
                         Person newPerson = new Person(lineContents);
-                        this.getAllThings().add(newPerson);
+                        this.getWorld().add(newPerson);
                         this.addThingToList(newPerson, "getPersons");
                         break;
                     case "job":
                         Job newJob = new Job(lineContents);
-                        this.getAllThings().add(newJob);
+                        this.getWorld().add(newJob);
                         this.addJobToShip(newJob);
                         break;
                     default:
@@ -88,6 +113,7 @@ public class World extends Thing {
         }
     }
 
+    @Nullable
     private <T extends Thing> T getImmediateParentByIndex(ArrayList<T> thingsList, int index) {
         for (T thing : thingsList) {
             if (thing.getIndex() == index) {
@@ -97,6 +123,8 @@ public class World extends Thing {
         return null;
     }
 
+    @Nullable
+    @SuppressWarnings("unchecked") // No other way I have found besides suppressing the warning.
     private <T extends Thing> T getThingByIndex(int index, String methodName) {
 
         Method getList;
@@ -120,12 +148,13 @@ public class World extends Thing {
                         IllegalArgumentException |
                         InvocationTargetException ex
         ) {
-            System.out.println("Error: " + ex);
+            showMessageDialog(null, "Error: " + ex, "Program Error", JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
 
-    private <T extends Thing> void addThingToList(T newThing, String methodName) {
+    @SuppressWarnings("unchecked") // No other way I have found besides suppressing the warning.
+    private <T extends Thing> void addThingToList(@NotNull T newThing, String methodName) {
 
         SeaPort newPort;
         ArrayList<T> thingsList;
@@ -147,11 +176,11 @@ public class World extends Thing {
                         IllegalArgumentException |
                         InvocationTargetException ex
         ) {
-            System.out.println("Error: " + ex);
+            showMessageDialog(null, "Error: " + ex, "Program Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void addJobToShip(Job newJob) {
+    private void addJobToShip(@NotNull Job newJob) {
         Dock newDock;
         Ship newShip = this.getThingByIndex(newJob.getParent(), "getShips");
 
@@ -165,7 +194,7 @@ public class World extends Thing {
         }
     }
 
-    private void addShipToParent(Ship newShip) {
+    private void addShipToParent(@NotNull Ship newShip) {
         SeaPort myPort;
         Dock myDock = this.getThingByIndex(newShip.getParent(), "getDocks");
 
@@ -175,7 +204,7 @@ public class World extends Thing {
                 myPort.getShips().add(newShip);
             }
             if (myPort != null) {
-                myPort.getQue().add(newShip);
+                myPort.getQueue().add(newShip);
             }
         } else {
             myPort = this.getImmediateParentByIndex(this.getPorts(), myDock.getParent());
@@ -187,10 +216,10 @@ public class World extends Thing {
     }
 
     public String toString() {
-        StringBuilder str = new StringBuilder();
-        for (SeaPort s : ports) {
-            str.append(s.toString()).append("\n");
+        StringBuilder stringBuilder = new StringBuilder();
+        for (SeaPort seaPort : this.ports) {
+            stringBuilder.append(seaPort).append("\n");
         }
-        return str.toString();
+        return stringBuilder.toString();
     }
 }

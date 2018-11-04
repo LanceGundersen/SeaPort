@@ -3,47 +3,65 @@ package edu.seaport;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class SeaPort extends Thing {
+/**
+ * File SeaPort.java
+ * The seaport class contains arrays for docks, queue, ships and persons. As the project progresses the class
+ * will be added to.
+ * @author Lance Gundersen
+ * @version 1.0
+ * @since 2018-11-03
+ *
+ */
+class SeaPort extends Thing {
 
     private ArrayList<Dock> docks;
-    private ArrayList<Ship> que;
+    private ArrayList<Ship> queue;
     private ArrayList<Ship> ships;
     private ArrayList<Person> persons;
 
-    SeaPort(Scanner sc) {
-        super(sc);
-        docks = new ArrayList<>();
-        ships = new ArrayList<>();
-        que = new ArrayList<>();
-        persons = new ArrayList<>();
+    /**
+     * Default Constructor.
+     * @param scannerContents is the file contents to be scanned.
+     * @return Nothing.
+     */
+    SeaPort(Scanner scannerContents) {
+        super(scannerContents);
+        this.docks = new ArrayList<>();
+        this.ships = new ArrayList<>();
+        this.queue = new ArrayList<>();
+        this.persons = new ArrayList<>();
     }
 
+    /** Return all jobs list. */
     ArrayList<Dock> getDocks() {
-        return docks;
+        return this.docks;
     }
 
+    /** Return all jobs list. */
     ArrayList<Ship> getShips() {
-        return ships;
+        return this.ships;
     }
 
-    ArrayList<Ship> getQue() {
-        return que;
+    /** Return all jobs list. */
+    ArrayList<Ship> getQueue() {
+        return this.queue;
     }
 
+    /** Return all persons list. */
     ArrayList<Person> getPersons() {
-        return persons;
+        return this.persons;
     }
 
     public String toString() {
-        StringBuilder st = new StringBuilder("\n\nSeaPort: " + super.toString());
-        for (Dock md: docks) st.append("\n").append(md);
-        st.append("\n\n --- List of all ships in que:");
-        for (Ship ms: que ) st.append("\n   > ").append(ms);
-        st.append("\n\n --- List of all ships:");
-        for (Ship ms: ships) st.append("\n   > ").append(ms);
-        st.append("\n\n --- List of all persons:");
-        for (Person mp: persons) st.append("\n   > ").append(mp);
-        return st.toString();
+        StringBuilder stringBuilder = new StringBuilder("\n\nSeaPort: " + super.toString());
+        for (Dock dock : this.docks) stringBuilder.append("\n").append(dock);
+        stringBuilder.append("\n\n --- List of all ships in queue:");
+        for (Ship ship : this.queue) stringBuilder.append("\n   > ").append(ship);
+        stringBuilder.append("\n\n --- List of all ships:");
+        for (Ship ship : this.ships) stringBuilder.append("\n   > ").append(ship);
+        stringBuilder.append("\n\n --- List of all persons:");
+        for (Person person : this.persons) stringBuilder.append("\n   > ").append(person);
+        return stringBuilder.toString();
     }
 
 }
