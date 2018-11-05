@@ -1,0 +1,147 @@
+a@startuml
+
+title __SEAPORT's Class Diagram__\n
+
+  package edu.seaport {
+    class CargoShip {
+        ~ CargoShip()
+        + toString()
+    }
+  }
+  
+
+  package edu.seaport {
+    class Dock {
+        ~ Dock()
+        ~ getShip()
+        ~ setShip()
+        + toString()
+    }
+  }
+  
+
+  package edu.seaport {
+    class Job {
+        ~ Job()
+    }
+  }
+  
+
+  package edu.seaport {
+    class PassengerShip {
+        ~ PassengerShip()
+        + toString()
+    }
+  }
+  
+
+  package edu.seaport {
+    class Person {
+        - skill : String
+        ~ Person()
+        ~ getSkill()
+        + toString()
+    }
+  }
+  
+
+  package edu.seaport {
+    class SeaPort {
+        - docks : ArrayList<Dock>
+        - queue : ArrayList<Ship>
+        - ships : ArrayList<Ship>
+        - persons : ArrayList<Person>
+        ~ SeaPort()
+        ~ getDocks()
+        ~ getShips()
+        ~ getQueue()
+        ~ getPersons()
+        + toString()
+    }
+  }
+  
+
+  package edu.seaport {
+    class SeaPortProgram {
+        - fileReadBtn : JButton
+        - searchBtn : JButton
+        - textOutput : JTextArea
+        - searchBox : TextField
+        - searchDropdown : JComboBox<String>
+        - SeaPortProgram()
+        {static} + main()
+        - searchBuilder()
+        - worldSearch()
+        - scanFile()
+        - getLocalFile()
+        - createGui()
+    }
+  }
+  
+
+  package edu.seaport {
+    class Ship {
+        - jobs : ArrayList<Job>
+        ~ Ship()
+        ~ getJobs()
+    }
+  }
+  
+
+  package edu.seaport {
+    class Thing {
+        - index : int
+        - name : String
+        - parent : int
+        ~ Thing()
+        ~ getIndex()
+        - setIndex()
+        ~ getName()
+        - setName()
+        ~ getParent()
+        - setParent()
+        + compareTo()
+        + toString()
+    }
+  }
+  
+
+  package edu.seaport {
+    class World {
+        - allThings : ArrayList<Thing>
+        - ports : ArrayList<SeaPort>
+        ~ World()
+        ~ getWorld()
+        - setWorld()
+        ~ getPorts()
+        - setPorts()
+        - process()
+        - getImmediateParentByIndex()
+        - getThingByIndex()
+        - addThingToList()
+        - addJobToShip()
+        - addShipToParent()
+        + toString()
+    }
+  }
+  
+
+  CargoShip -up-|> Ship
+  Dock -up-|> Thing
+  Dock o-- Ship : ship
+  Job -up-|> Thing
+  PassengerShip -up-|> Ship
+  Person -up-|> Thing
+  SeaPort -up-|> Thing
+  SeaPortProgram o-- World : world
+  Ship -up-|> Thing
+  World -up-|> Thing
+
+
+right footer
+
+
+SeaPortProgram Project 1 UML.
+endfooter
+
+@enduml
