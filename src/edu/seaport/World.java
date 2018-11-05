@@ -1,8 +1,5 @@
 package edu.seaport;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -113,7 +110,6 @@ class World extends Thing {
         }
     }
 
-    @Nullable
     private <T extends Thing> T getImmediateParentByIndex(ArrayList<T> thingsList, int index) {
         for (T thing : thingsList) {
             if (thing.getIndex() == index) {
@@ -123,7 +119,6 @@ class World extends Thing {
         return null;
     }
 
-    @Nullable
     @SuppressWarnings("unchecked") // No other way I have found besides suppressing the warning.
     private <T extends Thing> T getThingByIndex(int index, String methodName) {
 
@@ -154,7 +149,7 @@ class World extends Thing {
     }
 
     @SuppressWarnings("unchecked") // No other way I have found besides suppressing the warning.
-    private <T extends Thing> void addThingToList(@NotNull T newThing, String methodName) {
+    private <T extends Thing> void addThingToList(T newThing, String methodName) {
 
         SeaPort newPort;
         ArrayList<T> thingsList;
@@ -180,7 +175,7 @@ class World extends Thing {
         }
     }
 
-    private void addJobToShip(@NotNull Job newJob) {
+    private void addJobToShip(Job newJob) {
         Dock newDock;
         Ship newShip = this.getThingByIndex(newJob.getParent(), "getShips");
 
@@ -194,7 +189,7 @@ class World extends Thing {
         }
     }
 
-    private void addShipToParent(@NotNull Ship newShip) {
+    private void addShipToParent(Ship newShip) {
         SeaPort myPort;
         Dock myDock = this.getThingByIndex(newShip.getParent(), "getDocks");
 
