@@ -23,6 +23,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
 
 public class SeaPortProgram extends JFrame {
 
+    private static final long serialVersionUID = 1L;
     private World world;
     private JButton fileReadBtn, searchBtn;
     private JTextArea textOutput;
