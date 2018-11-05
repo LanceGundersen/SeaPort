@@ -1,7 +1,5 @@
 package edu.seaport;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Scanner;
 
 /**
@@ -64,7 +62,7 @@ class Thing implements Comparable<Thing> {
         this.parent = parent;
     }
 
-    public int compareTo(@NotNull Thing thingInstance) {
+    public int compareTo(Thing thingInstance) {
         if (thingInstance.getName().equals(this.getName())) {
             if ((thingInstance.getIndex() == this.getIndex()) && (thingInstance.getParent() == this.getParent()))
                 return 1;
