@@ -3,8 +3,7 @@ package edu.seaport;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Scanner;
@@ -148,33 +147,25 @@ public class SeaPortProgram extends JFrame {
     }
 
     /**
-     * This method calls getLocalFile method and scans a file defined by the user and outputs it to the GUI and
-     * instantiates a new world. This method could use some better error handling when a user doesn't select a
-     * file and cancels the FileReader.
+     * This method allows the user to open and scan and outputs it to the GUI and instantiates a new world.
      * @return Nothing.
      */
     private void scanFile() {
-        try {
-            FileReader fileReader = new FileReader(this.getLocalFile());
-            Scanner scanner = new Scanner(fileReader);
+
+        JFileChooser jFileChooser = new JFileChooser(".");
+        int jFileChooserResult = jFileChooser.showOpenDialog(null);
+
+        if (jFileChooserResult == JFileChooser.APPROVE_OPTION) {
+            File file = jFileChooser.getSelectedFile();
+            Scanner scanner = null;
+            try {
+                scanner = new Scanner(file);
+            } catch (FileNotFoundException e) {
+                JOptionPane.showMessageDialog(null, "No file selected.");
+            }
             this.world = new World(scanner);
             this.textOutput.setText(this.world.toString());
-        } catch (IOException e) {
-            //TODO: Account for file not being chosen vs. file error.
-            System.out.println("ParseFile Exception: " + e);
         }
-    }
-
-    /**
-     * This method opens a fileChooser GUI. This method could
-     * use some better error handling when a user doesn't select a file and cancels the FileReader.
-     * @return a file chosen by the user in the current directory path.
-     */
-    private File getLocalFile() {
-        JFileChooser fileChooser = new JFileChooser(".");
-        fileChooser.showOpenDialog(null);
-        fileChooser.setVisible(true);
-        return fileChooser.getSelectedFile();
     }
 
     /**
