@@ -24,8 +24,9 @@ public class SeaPortProgram extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private World world;
-    private JButton fileReadBtn, searchBtn;
-    private JTextArea textOutput;
+    private JButton fileReadBtn;
+    private JButton searchBtn;
+    private JTextArea textOutput, resultsOutput;
     private TextField searchBox;
     private JComboBox<String> searchDropdown;
 
@@ -61,6 +62,7 @@ public class SeaPortProgram extends JFrame {
      * @return Nothing.
      */
     private void searchBuilder(String searchText, int dropdownIndex) {
+
         // Check if world has data.
         if (this.world != null) {
 
@@ -70,8 +72,8 @@ public class SeaPortProgram extends JFrame {
                 String results = this.worldSearch(searchText, dropdownIndex);
 
                 if (results.equals(""))
-                    showMessageDialog(null, "Sorry, " + searchText + " not found!", "Search Results", JOptionPane.INFORMATION_MESSAGE);
-                else showMessageDialog(null, results, "Search Results", JOptionPane.INFORMATION_MESSAGE);
+                    this.resultsOutput.setText("Sorry, " + searchText + " not found!");
+                else this.resultsOutput.setText(results);
             } else
                 showMessageDialog(null, "Search text or dropdown selection missing!", "Error", JOptionPane.ERROR_MESSAGE);
         } else showMessageDialog(null, "Please choose a file!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -176,21 +178,11 @@ public class SeaPortProgram extends JFrame {
 
         JFrame frame = new JFrame("SeaPort Program");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(600, 600));
+//        frame.setPreferredSize(new Dimension(00, 600));
 
         JPanel panel = new JPanel(new BorderLayout());
         JPanel panelTop = new JPanel(new GridLayout(1, 5, 5, 5));
-
-        this.fileReadBtn = new JButton("Select File");
-        this.searchBtn = new JButton("Search");
-
-
-        JLabel searchBoxLabel = new JLabel("Search:", JLabel.RIGHT);
-        this.searchBox = new TextField();
-        this.searchBox = new TextField("", 10);
-
-        String[] searchOptions = new String[]{"", "name", "index", "skill"};
-        this.searchDropdown = new JComboBox<>(searchOptions);
+        JPanel panelBottom = new JPanel(new GridLayout(1, 3, 5, 5));
 
         // Main text output area styling
         this.textOutput = new JTextArea();
@@ -198,7 +190,37 @@ public class SeaPortProgram extends JFrame {
         this.textOutput.setFont(new java.awt.Font("Monospaced", Font.PLAIN, 12));
         this.textOutput.setLineWrap(true);
 
-        JScrollPane scrollPane = new JScrollPane(textOutput);
+        // Results text output area styling
+        this.resultsOutput = new JTextArea();
+        this.resultsOutput.setEditable(false);
+        this.resultsOutput.setFont(new java.awt.Font("Monospaced", Font.PLAIN, 12));
+        this.resultsOutput.setLineWrap(true);
+
+        this.fileReadBtn = new JButton("Select File");
+
+        JLabel searchBoxLabel = new JLabel("Search:", JLabel.RIGHT);
+        this.searchBox = new TextField("", 10);
+        String[] searchOptions = new String[]{"", "Name", "Index", "Skill"};
+        this.searchDropdown = new JComboBox<>(searchOptions);
+        this.searchBtn = new JButton("Search");
+
+        JLabel sortBoxLabel = new JLabel("Sort:", JLabel.RIGHT);
+        String[] sortPortComboBoxValues = new String[] {"All ports"};
+        JComboBox<String> portSortDropdown = new JComboBox<>(sortPortComboBoxValues);
+        String[] sortTargetComboBoxValues = new String[] {"Que", "Ships", "Docks", "Persons", "Jobs"};
+        JComboBox<String> targetSortDropdown = new JComboBox<>(sortTargetComboBoxValues);
+        String[] sortTypeComboBoxValues = new String[] {"Name", "Weight", "Length", "Width", "Draft"};
+        JComboBox<String> typeSortDropdown = new JComboBox<>(sortTypeComboBoxValues);
+
+        JButton sortbtn = new JButton("Sort");
+
+        // JTree results object
+        JTree mainTree = new JTree();
+        mainTree.setModel(null);
+
+        JScrollPane scrollPane = new JScrollPane(this.textOutput);
+        JScrollPane treeScrollPane = new JScrollPane(mainTree);
+        JScrollPane resultsScrollPane = new JScrollPane(this.resultsOutput);
 
         // Panel for the top menu bar
         panelTop.add(this.fileReadBtn);
@@ -206,9 +228,19 @@ public class SeaPortProgram extends JFrame {
         panelTop.add(this.searchBox);
         panelTop.add(this.searchDropdown);
         panelTop.add(this.searchBtn);
+        panelTop.add(sortBoxLabel);
+        panelTop.add(portSortDropdown);
+        panelTop.add(targetSortDropdown);
+        panelTop.add(typeSortDropdown);
+        panelTop.add(sortbtn);
 
-        panel.add(scrollPane, BorderLayout.CENTER);
+        panelBottom.add(scrollPane, BorderLayout.CENTER);
+        panelBottom.add(treeScrollPane, BorderLayout.CENTER);
+        panelBottom.add(resultsScrollPane, BorderLayout.CENTER);
+
         panel.add(panelTop, BorderLayout.NORTH);
+        panel.add(panelBottom, BorderLayout.SOUTH);
+
 
         frame.add(panel);
         frame.pack();
