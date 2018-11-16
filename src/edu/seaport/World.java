@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import static javax.swing.JOptionPane.showMessageDialog;
@@ -60,8 +61,11 @@ class World extends Thing {
      */
     private void process(Scanner scannerContents) {
 
-        while (scannerContents.hasNextLine()) {
+        HashMap<Integer, SeaPort> portsMap = new HashMap<>();
+        HashMap<Integer, Dock> docksMap = new HashMap<>();
+        HashMap<Integer, Ship> shipsMap = new HashMap<>();
 
+        while (scannerContents.hasNextLine()) {
             String lineString = scannerContents.nextLine().trim();
 
             if (lineString.length() == 0) {
@@ -77,31 +81,35 @@ class World extends Thing {
                         SeaPort newSeaPort = new SeaPort(lineContents);
                         this.getWorld().add(newSeaPort);
                         this.getPorts().add(newSeaPort);
+                        portsMap.put(newSeaPort.getIndex(), newSeaPort);
                         break;
                     case "dock":
                         Dock newDock = new Dock(lineContents);
                         this.getWorld().add(newDock);
-                        this.addThingToList(newDock, "getDocks");
+                        this.addThingToList(portsMap, newDock, "getDocks");
+                        docksMap.put(newDock.getIndex(), newDock);
                         break;
                     case "pship":
                         PassengerShip newPassengerShip = new PassengerShip(lineContents);
                         this.getWorld().add(newPassengerShip);
-                        this.addShipToParent(newPassengerShip);
+                        this.addShipToParent(newPassengerShip, docksMap, portsMap);
+                        shipsMap.put(newPassengerShip.getIndex(), newPassengerShip);
                         break;
                     case "cship":
                         CargoShip newCargoShip = new CargoShip(lineContents);
                         this.getWorld().add(newCargoShip);
-                        this.addShipToParent(newCargoShip);
+                        this.addShipToParent(newCargoShip, docksMap, portsMap);
+                        shipsMap.put(newCargoShip.getIndex(), newCargoShip);
                         break;
                     case "person":
                         Person newPerson = new Person(lineContents);
                         this.getWorld().add(newPerson);
-                        this.addThingToList(newPerson, "getPersons");
+                        this.addThingToList(portsMap, newPerson, "getPersons");
                         break;
                     case "job":
                         Job newJob = new Job(lineContents);
                         this.getWorld().add(newJob);
-                        this.addJobToShip(newJob);
+                        this.addJobToShip(newJob, shipsMap, docksMap);
                         break;
                     default:
                         break;
@@ -149,21 +157,14 @@ class World extends Thing {
     }
 
     @SuppressWarnings("unchecked") // No other way I have found besides suppressing the warning.
-    private <T extends Thing> void addThingToList(T newThing, String methodName) {
+    private <T extends Thing> void addThingToList(HashMap<Integer, SeaPort> portsMap, T newThing, String methodName) {
 
-        SeaPort newPort;
-        ArrayList<T> thingsList;
-        Method getList;
-
-        newPort = this.getImmediateParentByIndex(this.getPorts(), newThing.getParent());
+        SeaPort newPort = portsMap.get(newThing.getParent());
 
         try {
-            getList = SeaPort.class.getDeclaredMethod(methodName);
-
-            thingsList = (ArrayList<T>) getList.invoke(newPort);
-            if (newPort != null) {
-                thingsList.add(newThing);
-            }
+            Method getList = SeaPort.class.getDeclaredMethod(methodName);
+            ArrayList<T> thingsList = (ArrayList<T>) getList.invoke(newPort);
+            if (newPort != null) thingsList.add(newThing);
         } catch (
                 NoSuchMethodException |
                         SecurityException |
@@ -171,50 +172,47 @@ class World extends Thing {
                         IllegalArgumentException |
                         InvocationTargetException ex
         ) {
-            showMessageDialog(null, "Error: " + ex, "Program Error", JOptionPane.ERROR_MESSAGE);
+            System.out.println("Error: " + ex);
         }
     }
 
-    private void addJobToShip(Job newJob) {
-        Dock newDock;
-        Ship newShip = this.getThingByIndex(newJob.getParent(), "getShips");
 
-        if (newShip != null) {
-            newShip.getJobs().add(newJob);
-        } else {
-            newDock = this.getThingByIndex(newJob.getParent(), "getDocks");
-            if (newDock != null) {
-                newDock.getShip().getJobs().add(newJob);
-            }
+    private void addJobToShip(Job newJob, HashMap<Integer, Ship> shipsMap, HashMap<Integer, Dock> docksMap) {
+
+        Ship newShip = shipsMap.get(newJob.getParent());
+
+        if (newShip != null) newShip.getJobs().add(newJob);
+        else {
+            Dock newDock = docksMap.get(newJob.getParent());
+            newDock.getShip().getJobs().add(newJob);
         }
     }
 
-    private void addShipToParent(Ship newShip) {
+    private void addShipToParent(Ship newShip, HashMap<Integer, Dock> docksMap, HashMap<Integer, SeaPort> portsMap) {
+
         SeaPort myPort;
-        Dock myDock = this.getThingByIndex(newShip.getParent(), "getDocks");
+        Dock myDock = docksMap.get(newShip.getParent());
 
         if (myDock == null) {
-            myPort = this.getImmediateParentByIndex(this.getPorts(), newShip.getParent());
-            if (myPort != null) {
-                myPort.getShips().add(newShip);
-            }
-            if (myPort != null) {
-                myPort.getQueue().add(newShip);
-            }
+            myPort = portsMap.get(newShip.getParent());
+            myPort.getShips().add(newShip);
+            myPort.getQueue().add(newShip);
         } else {
-            myPort = this.getImmediateParentByIndex(this.getPorts(), myDock.getParent());
+            myPort = portsMap.get(myDock.getParent());
             myDock.setShip(newShip);
-            if (myPort != null) {
-                myPort.getShips().add(newShip);
-            }
+            myPort.getShips().add(newShip);
         }
     }
 
     public String toString() {
+
         StringBuilder stringBuilder = new StringBuilder();
+
         for (SeaPort seaPort : this.ports) {
-            stringBuilder.append(seaPort).append("\n");
+            stringBuilder.append(seaPort);
+            stringBuilder.append("\n");
         }
+
         return stringBuilder.toString();
     }
 }
