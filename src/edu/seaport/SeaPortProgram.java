@@ -6,8 +6,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Scanner;
+import java.util.*;
 
+import static java.util.Collections.*;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 /**
@@ -25,10 +26,10 @@ public class SeaPortProgram extends JFrame {
     private static final long serialVersionUID = 1L;
     private World world;
     private JButton fileReadBtn;
-    private JButton searchBtn;
+    private JButton searchBtn, sortbtn;
     private JTextArea textOutput, resultsOutput;
     private TextField searchBox;
-    private JComboBox<String> searchDropdown;
+    private JComboBox<String> searchDropdown, portSortDropdown, targetSortDropdown, typeSortDropdown;
 
     /**
      * Default Constructor which creates the GUI along with providing click handlers for reading in a file and
@@ -40,7 +41,102 @@ public class SeaPortProgram extends JFrame {
         this.createGui();
         this.fileReadBtn.addActionListener(e -> scanFile());
         this.searchBtn.addActionListener(e -> searchBuilder(searchBox.getText().trim(), searchDropdown.getSelectedIndex()));
+        this.sortbtn.addActionListener(e -> sortBuilder());
 
+    }
+
+    private void sortBuilder() {
+
+        // Check if world has data.
+        if (this.world != null) {
+
+            String sortPort = Objects.requireNonNull(this.portSortDropdown.getSelectedItem()).toString();
+            String sortTarget = Objects.requireNonNull(this.targetSortDropdown.getSelectedItem()).toString();
+            String sortType = Objects.requireNonNull(this.typeSortDropdown.getSelectedItem()).toString();
+
+            StringBuilder result = new StringBuilder();
+            ArrayList<Thing> thingsList = new ArrayList<>();
+
+            HashMap<String, String> typeMethodMap = new HashMap<>() {{
+                put("Name", "getIndex");
+                put("Weight", "getWeight");
+                put("Length", "getLength");
+                put("Width", "getWidth");
+                put("Draft", "getDraft");
+            }};
+
+            HashMap<String, String> targetMethodMap = new HashMap<>() {{
+                put("Queue", "getQueue");
+                put("Ships", "getShips");
+                put("Docks", "getDocks");
+                put("Persons", "getPersons");
+                put("Jobs", "getShips");
+            }};
+
+            String fieldMethodName = typeMethodMap.get(sortType);
+            String listMethodName = targetMethodMap.get(sortTarget);
+
+            try {
+                Method getList = SeaPort.class.getDeclaredMethod(listMethodName);
+
+                Method getField;
+                if (sortTarget.equals("Queue") && !sortType.equals("Name")) {
+                    getField = Ship.class.getDeclaredMethod(fieldMethodName);
+                } else {
+                    getField = Thing.class.getDeclaredMethod(fieldMethodName);
+                }
+
+                ArrayList<Thing> gottenList;
+                if (sortPort.equals("All Ports")) {
+                    sortPort = sortPort.toLowerCase();
+                    for (SeaPort newPort : this.world.getPorts()) {
+                        gottenList = (ArrayList<Thing>) getList.invoke(newPort);
+                        thingsList.addAll(gottenList);
+                    }
+                } else {
+                    for (SeaPort newPort : this.world.getPorts())
+                        if (newPort.getName().equals(sortPort)) {
+                            gottenList = (ArrayList<Thing>) getList.invoke(newPort);
+                            thingsList.addAll(gottenList);
+                        }
+                }
+
+                if (sortTarget.equals("Jobs")) {
+                    ArrayList<Job> jobsList = new ArrayList<>();
+
+                    for (Thing aThingsList : thingsList) {
+                        Ship newShip = (Ship) aThingsList;
+                        jobsList.addAll(newShip.getJobs());
+                    }
+                    thingsList.clear();
+                    thingsList.addAll(jobsList);
+                }
+
+                if (thingsList.isEmpty()) {
+                    result.append("> No results found.\n");
+                } else {
+                    sort(thingsList, new Thing(sortType));
+                    for (Thing newThing : thingsList) {
+                        result.append("> ");
+                        result.append(newThing.getName());
+                        result.append(" (");
+                        result.append(getField.invoke(newThing));
+                        result.append(")\n");
+                    }
+                }
+            } catch (
+                    NoSuchMethodException |
+                            SecurityException |
+                            IllegalAccessException |
+                            IllegalArgumentException |
+                            InvocationTargetException ex
+            ) {
+                System.out.println("Error: " + ex);
+            }
+
+            this.resultsOutput.append("Sort results for '" + sortTarget + " "
+                    + sortType.toLowerCase() + " in " + sortPort + "'\n" + result + "\n");
+        } else showMessageDialog(null, "Please choose a file!", "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -94,41 +190,41 @@ public class SeaPortProgram extends JFrame {
         StringBuilder results = new StringBuilder();
         Method method = null;
 
-        if (dropdownIndex != 3) { // If the option selected is 1 or 2 then return name, index and class.
-            try {
-                switch (dropdownIndex) {
-                    case 1:
-                        method = Thing.class.getDeclaredMethod("getName");
-                        break;
-                    case 2:
-                        method = Thing.class.getDeclaredMethod("getIndex");
-                        break;
-                }
-
-                for (Thing item : this.world.getWorld()) {
-
-                    assert method != null;
-                    String parameter = method.invoke(item).toString();
-
-                    if (parameter.equals(searchText)) {
-                        results.append(item.getName());
-                        results.append(" ");
-                        results.append(item.getIndex());
-                        results.append(" (");
-                        results.append(item.getClass().getSimpleName());
-                        results.append(")\n");
-                    }
-                }
-            } catch (
-                    NoSuchMethodException |
-                            SecurityException |
-                            IllegalAccessException |
-                            IllegalArgumentException |
-                            InvocationTargetException ex
-            ) {
-                showMessageDialog(null, "Error: " + ex, "Program Error", JOptionPane.ERROR_MESSAGE);
+        // If the option selected is 1 or 2 then return name, index and class.
+        if (dropdownIndex != 3) try {
+            switch (dropdownIndex) {
+                case 1:
+                    method = Thing.class.getDeclaredMethod("getName");
+                    break;
+                case 2:
+                    method = Thing.class.getDeclaredMethod("getIndex");
+                    break;
             }
-        } else { // If the option selected is 3 then return name, and index only.
+
+            for (Thing item : this.world.getWorld()) {
+
+                assert method != null;
+                String parameter = method.invoke(item).toString();
+
+                if (parameter.equals(searchText)) {
+                    results.append(item.getName());
+                    results.append(" ");
+                    results.append(item.getIndex());
+                    results.append(" (");
+                    results.append(item.getClass().getSimpleName());
+                    results.append(")\n");
+                }
+            }
+        } catch (
+                NoSuchMethodException |
+                        SecurityException |
+                        IllegalAccessException |
+                        IllegalArgumentException |
+                        InvocationTargetException ex
+        ) {
+            showMessageDialog(null, "Error: " + ex, "Program Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else { // If the option selected is 3 then return name, and index only.
 
             for (SeaPort port : this.world.getPorts()) {
 
@@ -205,14 +301,14 @@ public class SeaPortProgram extends JFrame {
         this.searchBtn = new JButton("Search");
 
         JLabel sortBoxLabel = new JLabel("Sort:", JLabel.RIGHT);
-        String[] sortPortComboBoxValues = new String[] {"All ports"};
-        JComboBox<String> portSortDropdown = new JComboBox<>(sortPortComboBoxValues);
-        String[] sortTargetComboBoxValues = new String[] {"Que", "Ships", "Docks", "Persons", "Jobs"};
-        JComboBox<String> targetSortDropdown = new JComboBox<>(sortTargetComboBoxValues);
+        String[] sortPortComboBoxValues = new String[] {"All Ports"};
+        portSortDropdown = new JComboBox<>(sortPortComboBoxValues);
+        String[] sortTargetComboBoxValues = new String[] {"Queue", "Ships", "Docks", "Persons", "Jobs"};
+        targetSortDropdown = new JComboBox<>(sortTargetComboBoxValues);
         String[] sortTypeComboBoxValues = new String[] {"Name", "Weight", "Length", "Width", "Draft"};
-        JComboBox<String> typeSortDropdown = new JComboBox<>(sortTypeComboBoxValues);
+        typeSortDropdown = new JComboBox<>(sortTypeComboBoxValues);
 
-        JButton sortbtn = new JButton("Sort");
+        this.sortbtn = new JButton("Sort");
 
         // JTree results object
         JTree mainTree = new JTree();
@@ -229,10 +325,10 @@ public class SeaPortProgram extends JFrame {
         panelTop.add(this.searchDropdown);
         panelTop.add(this.searchBtn);
         panelTop.add(sortBoxLabel);
-        panelTop.add(portSortDropdown);
-        panelTop.add(targetSortDropdown);
-        panelTop.add(typeSortDropdown);
-        panelTop.add(sortbtn);
+        panelTop.add(this.portSortDropdown);
+        panelTop.add(this.targetSortDropdown);
+        panelTop.add(this.typeSortDropdown);
+        panelTop.add(this.sortbtn);
 
         panelBottom.add(scrollPane, BorderLayout.CENTER);
         panelBottom.add(treeScrollPane, BorderLayout.CENTER);
