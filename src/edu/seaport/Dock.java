@@ -34,7 +34,7 @@ class Dock extends Thing {
     }
 
     public String toString() {
-        return "Dock: " + super.toString() + "\n  Ship: " + this.ship.toString();
+        return String.format("Dock: %s\n  Ship: %s", super.toString(), this.ship.toString());
     }
 
 }

@@ -26,28 +26,44 @@ class SeaPort extends Thing {
      */
     SeaPort(Scanner scannerContents) {
         super(scannerContents);
-        this.docks = new ArrayList<>();
-        this.ships = new ArrayList<>();
-        this.queue = new ArrayList<>();
-        this.persons = new ArrayList<>();
+        this.setDocks(new ArrayList<>());
+        this.setQueue(new ArrayList<>());
+        this.setShips(new ArrayList<>());
+        this.setPersons(new ArrayList<>());
     }
 
     /** Return all jobs list. */
+    private void setDocks(ArrayList<Dock> docks) {
+        this.docks = docks;
+    }
+
     ArrayList<Dock> getDocks() {
         return this.docks;
     }
 
     /** Return all jobs list. */
+    private void setShips(ArrayList<Ship> ships) {
+        this.ships = ships;
+    }
+
     ArrayList<Ship> getShips() {
         return this.ships;
     }
 
     /** Return all jobs list. */
+    private void setQueue(ArrayList<Ship> queue) {
+        this.queue = queue;
+    }
+
     ArrayList<Ship> getQueue() {
         return this.queue;
     }
 
     /** Return all persons list. */
+    private void setPersons(ArrayList<Person> persons) {
+        this.persons = persons;
+    }
+
     ArrayList<Person> getPersons() {
         return this.persons;
     }
