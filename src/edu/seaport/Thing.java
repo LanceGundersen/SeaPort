@@ -92,18 +92,18 @@ class Thing implements Comparable<Thing>, Comparator<Thing> {
     public int compare(Thing thing1, Thing thing2) {
 
         switch (this.name) {
-            case "By weight":
+            case "Weight":
                 return Double.compare(((Ship) thing1).getWeight(), ((Ship) thing2).getWeight());
-            case "By length":
+            case "Length":
                 return Double.compare(((Ship) thing1).getLength(), ((Ship) thing2).getLength());
-            case "By draft":
+            case "Draft":
                 return Double.compare(((Ship) thing1).getDraft(), ((Ship) thing2).getDraft());
-            case "By width":
+            case "Width":
                 return Double.compare(((Ship) thing1).getWidth(), ((Ship) thing2).getWidth());
-            case "By name":
+            case "Name":
                 return thing1.getName().compareTo(thing2.getName());
             default:
-                return -1;
+                return 0;
         }
     }
 
