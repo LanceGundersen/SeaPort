@@ -21,7 +21,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
  *
  */
 
-public class SeaPortProgram extends JFrame {
+class SeaPortProgram extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private World world;
@@ -115,7 +115,7 @@ public class SeaPortProgram extends JFrame {
                 if (thingsList.isEmpty()) {
                     result.append("> No results found.\n");
                 } else {
-                    sort(thingsList, new Thing(sortType));
+                    thingsList.sort(new Thing(sortType));
                     for (Thing newThing : thingsList) {
                         result.append("> ");
                         result.append(newThing.getName());
@@ -271,14 +271,14 @@ public class SeaPortProgram extends JFrame {
      * @return Nothing.
      */
     private void createGui() {
-
         JFrame frame = new JFrame("SeaPort Program");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.setPreferredSize(new Dimension(00, 600));
 
         JPanel panel = new JPanel(new BorderLayout());
         JPanel panelTop = new JPanel(new GridLayout(1, 5, 5, 5));
-        JPanel panelBottom = new JPanel(new GridLayout(1, 3, 5, 5));
+        JPanel panelBottom = new JPanel(new GridLayout(1, 1));
+        panelBottom.setPreferredSize(new Dimension(500, 600));
+        JTabbedPane tabbedPane = new JTabbedPane();
 
         // Main text output area styling
         this.textOutput = new JTextArea();
@@ -330,9 +330,11 @@ public class SeaPortProgram extends JFrame {
         panelTop.add(this.typeSortDropdown);
         panelTop.add(this.sortbtn);
 
-        panelBottom.add(scrollPane, BorderLayout.CENTER);
-        panelBottom.add(treeScrollPane, BorderLayout.CENTER);
-        panelBottom.add(resultsScrollPane, BorderLayout.CENTER);
+        tabbedPane.addTab("World", scrollPane);
+        tabbedPane.addTab("Tree", treeScrollPane);
+        tabbedPane.addTab("Results", resultsScrollPane);
+
+        panelBottom.add(tabbedPane);
 
         panel.add(panelTop, BorderLayout.NORTH);
         panel.add(panelBottom, BorderLayout.SOUTH);
