@@ -12,6 +12,8 @@ import java.util.Scanner;
  */
 class PassengerShip extends Ship {
 
+    private int numberOfOccupiedRooms, numberOfPassengers, numberOfRooms;
+
     /**
      * Default Constructor.
      * @param scannerContents is the file contents to be scanned.
@@ -19,14 +21,46 @@ class PassengerShip extends Ship {
      */
     PassengerShip(Scanner scannerContents) {
         super(scannerContents);
+        if (scannerContents.hasNextInt()) {
+            this.setNumberOfPassengers(scannerContents.nextInt());
+        }
+
+        if (scannerContents.hasNextInt()) {
+            this.setNumberOfRooms(scannerContents.nextInt());
+        }
+
+        if (scannerContents.hasNextInt()) {
+            this.setNumberOfOccupiedRooms(scannerContents.nextInt());
+        }
+    }
+
+    private int getNumberOfPassengers() {
+        return this.numberOfPassengers;
+    }
+
+    private void setNumberOfPassengers(int numberOfPassengers) {
+        this.numberOfPassengers = numberOfPassengers;
+    }
+
+    private int getNumberOfRooms() {
+        return this.numberOfRooms;
+    }
+
+    private void setNumberOfRooms(int numberOfRooms) {
+        this.numberOfRooms = numberOfRooms;
+    }
+
+    private int getNumberOfOccupiedRooms() {
+        return this.numberOfOccupiedRooms;
+    }
+
+    private void setNumberOfOccupiedRooms(int numberOfOccupiedRooms) {
+        this.numberOfOccupiedRooms = numberOfOccupiedRooms;
     }
 
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder("Passenger ship: " + super.toString());
-        if (getJobs().size() == 0)
-            return stringBuilder.toString();
-        for (Job job : getJobs()) stringBuilder.append("\n       - ").append(job);
-        return stringBuilder.toString();
+
+        return String.format("Passenger Ship: %s\n\tPassengers: %d\n\tRooms: %d\n\tOccupied Rooms: %d", super.toString(), this.getNumberOfPassengers(), this.getNumberOfRooms(), this.getNumberOfOccupiedRooms());
     }
 
 }

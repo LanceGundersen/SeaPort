@@ -21,7 +21,13 @@ class Person extends Thing {
      */
     Person(Scanner scannerContents) {
         super(scannerContents);
-        this.skill = scannerContents.next();
+        if (!scannerContents.hasNext()) this.setSkill("Error");
+        this.setSkill(scannerContents.next());
+    }
+
+
+    private void setSkill(String skill) {
+        this.skill = skill;
     }
 
     /** Return all jobs list. */
@@ -30,7 +36,7 @@ class Person extends Thing {
     }
 
     public String toString() {
-        return "Person: " + getName() + " " + getIndex() + " " + this.skill;
+        return String.format("Person: %s %d %s", getName(), getIndex(), this.skill);
     }
 
 }

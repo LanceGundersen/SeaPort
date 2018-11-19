@@ -1,19 +1,17 @@
 package edu.seaport;
 
-import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
-import static javax.swing.JOptionPane.showMessageDialog;
+import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
 /**
  * File World.java
- * The world class creates arrays of things and ports. As the project progresses the class will be added to.
+ * The world class creates arrays of things and ports as well as provide various sorting methods.
  * @author Lance Gundersen
- * @version 1.0
- * @since 2018-11-03
+ * @version 2.0
+ * @since 2018-11-18
  *
  */
 class World extends Thing {
@@ -31,6 +29,116 @@ class World extends Thing {
         this.setWorld(new ArrayList<>());
         this.setPorts(new ArrayList<>());
         this.process(scannerContents);
+    }
+
+    /**
+     * This method performs a sorting of world by index.
+     * @return Nothing.
+     */
+    void sortByIndex() {
+
+        if(getPorts().size()>1)
+            getPorts().sort((port1, port2) -> (Integer.compare(port1.getIndex(), port2.getIndex())));
+
+        for (SeaPort seaPort : ports) {
+            seaPort.getQueue().sort((ship1, ship2) -> (Integer.compare(ship1.getIndex(), ship2.getIndex())));
+            seaPort.getShips().sort((ship1, ship2) -> (Integer.compare(ship1.getIndex(), ship2.getIndex())));
+            seaPort.getPersons().sort((person1, person2) -> (Integer.compare(person1.getIndex(), person2.getIndex())));
+            seaPort.getDocks().sort((dock1, dock2) -> (Integer.compare(dock1.getIndex(), dock2.getIndex())));
+        }
+    }
+
+    /**
+     * This method performs a sorting of worlds ships by weight.
+     * @return Nothing.
+     */
+    void sortByWeight() {
+        for (SeaPort seaPort : ports) {
+            seaPort.getQueue().sort((ship1, ship2) -> (Double.compare(ship1.getWeight(), ship2.getWeight())));
+            seaPort.getShips().sort((ship1, ship2) -> (Double.compare(ship1.getWeight(), ship2.getWeight())));
+        }
+    }
+
+
+    /**
+     * This method performs a sorting of worlds ships by length.
+     * @return Nothing.
+     */
+    void sortByLength() {
+
+        for (SeaPort seaPort : ports) {
+            seaPort.getQueue().sort((ship1, ship2) -> (Double.compare(ship1.getLength(), ship2.getLength())));
+            seaPort.getShips().sort((ship1, ship2) -> (Double.compare(ship1.getLength(), ship2.getLength())));
+        }
+    }
+
+    /**
+     * This method performs a sorting of worlds ships by draft.
+     * @return Nothing.
+     */
+    void sortByDraft() {
+        for (SeaPort seaPort : ports) {
+            seaPort.getQueue().sort((ship1, ship2) -> (Double.compare(ship1.getDraft(), ship2.getDraft())));
+            seaPort.getShips().sort((ship1, ship2) -> (Double.compare(ship1.getDraft(), ship2.getDraft())));
+        }
+    }
+
+    /**
+     * This method performs a sorting of worlds ships by draft.
+     * @return Nothing.
+     */
+    void sortByWidth() {
+        for (SeaPort seaPort : ports) {
+            seaPort.getQueue().sort((ship1, ship2) -> (Double.compare(ship1.getWidth(), ship2.getWidth())));
+            seaPort.getShips().sort((ship1, ship2) -> (Double.compare(ship1.getWidth(), ship2.getWidth())));
+        }
+    }
+
+    /**
+     * This method performs a sorting of worlds people by skills.
+     * @return Nothing.
+     */
+    void sortBySkill() {
+
+        for (SeaPort seaPort : ports) {
+            seaPort.getPersons().sort((person1, person2) -> {
+                int res = CASE_INSENSITIVE_ORDER.compare(person1.getSkill(), person2.getSkill());
+                return (res != 0) ? res : person1.getSkill().compareTo(person2.getSkill());
+            });
+        }
+    }
+
+    /**
+     * This method performs a sorting of world by name.
+     * @return Nothing.
+     */
+    void sortByName() {
+
+        if(getPorts().size()>1) {
+            getPorts().sort((port1, port2) -> {
+                int res = CASE_INSENSITIVE_ORDER.compare(port1.getName(), port2.getName());
+                return (res != 0) ? res : port1.getName().compareTo(port2.getName());
+            });
+        }
+
+        for (SeaPort seaPort : ports) {
+            seaPort.getQueue().sort((ship1, ship2) -> {
+                int res = CASE_INSENSITIVE_ORDER.compare(ship1.getName(), ship2.getName());
+                return (res != 0) ? res : ship1.getName().compareTo(ship2.getName());
+            });
+            seaPort.getShips().sort((ship1, ship2) -> {
+                int res = CASE_INSENSITIVE_ORDER.compare(ship1.getName(), ship2.getName());
+                return (res != 0) ? res : ship1.getName().compareTo(ship2.getName());
+            });
+            seaPort.getPersons().sort((person1, person2) -> {
+                int res = CASE_INSENSITIVE_ORDER.compare(person1.getName(), person2.getName());
+                return (res != 0) ? res : person1.getName().compareTo(person2.getName());
+            });
+            seaPort.getDocks().sort((dock1, dock2) -> {
+                int res = CASE_INSENSITIVE_ORDER.compare(dock1.getName(), dock2.getName());
+                return (res != 0) ? res : dock1.getName().compareTo(dock2.getName());
+            });
+        }
     }
 
     /** Return all things list. */
@@ -60,48 +168,52 @@ class World extends Thing {
      */
     private void process(Scanner scannerContents) {
 
-        while (scannerContents.hasNextLine()) {
+        HashMap<Integer, SeaPort> portsMap = new HashMap<>();
+        HashMap<Integer, Dock> docksMap = new HashMap<>();
+        HashMap<Integer, Ship> shipsMap; shipsMap = new HashMap<>();
 
+        while (scannerContents.hasNextLine()) {
             String lineString = scannerContents.nextLine().trim();
 
-            if (lineString.length() == 0) {
-                continue;
-            }
+            if (lineString.length() == 0) continue;
 
             Scanner lineContents = new Scanner(lineString);
 
             if (lineContents.hasNext()) {
-
                 switch (lineContents.next().trim()) {
                     case "port":
                         SeaPort newSeaPort = new SeaPort(lineContents);
                         this.getWorld().add(newSeaPort);
                         this.getPorts().add(newSeaPort);
+                        portsMap.put(newSeaPort.getIndex(), newSeaPort);
                         break;
                     case "dock":
                         Dock newDock = new Dock(lineContents);
                         this.getWorld().add(newDock);
-                        this.addThingToList(newDock, "getDocks");
+                        this.addThingToList(portsMap, newDock, "getDocks");
+                        docksMap.put(newDock.getIndex(), newDock);
                         break;
                     case "pship":
                         PassengerShip newPassengerShip = new PassengerShip(lineContents);
                         this.getWorld().add(newPassengerShip);
-                        this.addShipToParent(newPassengerShip);
+                        this.addShipToParent(newPassengerShip, docksMap, portsMap);
+                        shipsMap.put(newPassengerShip.getIndex(), newPassengerShip);
                         break;
                     case "cship":
                         CargoShip newCargoShip = new CargoShip(lineContents);
                         this.getWorld().add(newCargoShip);
-                        this.addShipToParent(newCargoShip);
+                        this.addShipToParent(newCargoShip, docksMap, portsMap);
+                        shipsMap.put(newCargoShip.getIndex(), newCargoShip);
                         break;
                     case "person":
                         Person newPerson = new Person(lineContents);
                         this.getWorld().add(newPerson);
-                        this.addThingToList(newPerson, "getPersons");
+                        this.addThingToList(portsMap, newPerson, "getPersons");
                         break;
                     case "job":
                         Job newJob = new Job(lineContents);
                         this.getWorld().add(newJob);
-                        this.addJobToShip(newJob);
+                        this.addJobToShip(newJob, shipsMap, docksMap);
                         break;
                     default:
                         break;
@@ -110,32 +222,15 @@ class World extends Thing {
         }
     }
 
-    private <T extends Thing> T getImmediateParentByIndex(ArrayList<T> thingsList, int index) {
-        for (T thing : thingsList) {
-            if (thing.getIndex() == index) {
-                return thing;
-            }
-        }
-        return null;
-    }
-
     @SuppressWarnings("unchecked") // No other way I have found besides suppressing the warning.
-    private <T extends Thing> T getThingByIndex(int index, String methodName) {
+    private <T extends Thing> void addThingToList(HashMap<Integer, SeaPort> portsMap, T newThing, String methodName) {
 
-        Method getList;
-        T newThing;
-        ArrayList<T> thingsList;
+        SeaPort newPort = portsMap.get(newThing.getParent());
 
         try {
-            getList = SeaPort.class.getDeclaredMethod(methodName);
-            for (SeaPort port : this.getPorts()) {
-                thingsList = (ArrayList<T>) getList.invoke(port);
-                newThing = this.getImmediateParentByIndex(thingsList, index);
-
-                if (newThing != null) {
-                    return newThing;
-                }
-            }
+            Method getList = SeaPort.class.getDeclaredMethod(methodName);
+            ArrayList<T> thingsList = (ArrayList<T>) getList.invoke(newPort);
+            if (newPort != null) thingsList.add(newThing);
         } catch (
                 NoSuchMethodException |
                         SecurityException |
@@ -143,78 +238,46 @@ class World extends Thing {
                         IllegalArgumentException |
                         InvocationTargetException ex
         ) {
-            showMessageDialog(null, "Error: " + ex, "Program Error", JOptionPane.ERROR_MESSAGE);
-        }
-        return null;
-    }
-
-    @SuppressWarnings("unchecked") // No other way I have found besides suppressing the warning.
-    private <T extends Thing> void addThingToList(T newThing, String methodName) {
-
-        SeaPort newPort;
-        ArrayList<T> thingsList;
-        Method getList;
-
-        newPort = this.getImmediateParentByIndex(this.getPorts(), newThing.getParent());
-
-        try {
-            getList = SeaPort.class.getDeclaredMethod(methodName);
-
-            thingsList = (ArrayList<T>) getList.invoke(newPort);
-            if (newPort != null) {
-                thingsList.add(newThing);
-            }
-        } catch (
-                NoSuchMethodException |
-                        SecurityException |
-                        IllegalAccessException |
-                        IllegalArgumentException |
-                        InvocationTargetException ex
-        ) {
-            showMessageDialog(null, "Error: " + ex, "Program Error", JOptionPane.ERROR_MESSAGE);
+            System.out.println("Error: " + ex);
         }
     }
 
-    private void addJobToShip(Job newJob) {
-        Dock newDock;
-        Ship newShip = this.getThingByIndex(newJob.getParent(), "getShips");
+    private void addJobToShip(Job newJob, HashMap<Integer, Ship> shipsMap, HashMap<Integer, Dock> docksMap) {
 
-        if (newShip != null) {
-            newShip.getJobs().add(newJob);
-        } else {
-            newDock = this.getThingByIndex(newJob.getParent(), "getDocks");
-            if (newDock != null) {
-                newDock.getShip().getJobs().add(newJob);
-            }
+        Ship newShip = shipsMap.get(newJob.getParent());
+
+        if (newShip != null) newShip.getJobs().add(newJob);
+        else {
+            Dock newDock = docksMap.get(newJob.getParent());
+            newDock.getShip().getJobs().add(newJob);
         }
     }
 
-    private void addShipToParent(Ship newShip) {
+    private void addShipToParent(Ship newShip, HashMap<Integer, Dock> docksMap, HashMap<Integer, SeaPort> portsMap) {
+
         SeaPort myPort;
-        Dock myDock = this.getThingByIndex(newShip.getParent(), "getDocks");
+        Dock myDock = docksMap.get(newShip.getParent());
 
         if (myDock == null) {
-            myPort = this.getImmediateParentByIndex(this.getPorts(), newShip.getParent());
-            if (myPort != null) {
-                myPort.getShips().add(newShip);
-            }
-            if (myPort != null) {
-                myPort.getQueue().add(newShip);
-            }
+            myPort = portsMap.get(newShip.getParent());
+            myPort.getShips().add(newShip);
+            myPort.getQueue().add(newShip);
         } else {
-            myPort = this.getImmediateParentByIndex(this.getPorts(), myDock.getParent());
+            myPort = portsMap.get(myDock.getParent());
             myDock.setShip(newShip);
-            if (myPort != null) {
-                myPort.getShips().add(newShip);
-            }
+            myPort.getShips().add(newShip);
         }
     }
 
     public String toString() {
+
         StringBuilder stringBuilder = new StringBuilder();
+
         for (SeaPort seaPort : this.ports) {
-            stringBuilder.append(seaPort).append("\n");
+            stringBuilder.append(seaPort);
+            stringBuilder.append("\n");
         }
+
         return stringBuilder.toString();
     }
 }
