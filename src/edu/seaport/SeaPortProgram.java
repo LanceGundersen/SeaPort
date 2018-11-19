@@ -26,7 +26,7 @@ class SeaPortProgram extends JFrame {
     private World world;
     private JButton fileReadButton;
     private JButton searchButton, sortButton;
-    private JTextArea textOutput;
+    private JTextArea textOutput, resultsOutput;
     private TextField searchBox;
     private JComboBox<String> searchDropdown, sortDropdown;
 
@@ -49,34 +49,38 @@ class SeaPortProgram extends JFrame {
     private void sortBuilder() {
         // Check if world has data.
         if (this.world != null) {
+
+            if (this.resultsOutput != null)
+                this.resultsOutput.setText("");
+
             switch(Objects.requireNonNull(this.sortDropdown.getSelectedItem()).toString()) {
                 case "Weight":
                     this.world.sortByWeight();
-                    this.textOutput.setText(this.world.toString());
+                    this.resultsOutput.setText(this.world.toString());
                     break;
                 case "Length":
                     this.world.sortByLength();
-                    this.textOutput.setText(this.world.toString());
+                    this.resultsOutput.setText(this.world.toString());
                     break;
                 case "Draft":
                     this.world.sortByDraft();
-                    this.textOutput.setText(this.world.toString());
+                    this.resultsOutput.setText(this.world.toString());
                     break;
                 case "Width":
                     this.world.sortByWidth();
-                    this.textOutput.setText(this.world.toString());
+                    this.resultsOutput.setText(this.world.toString());
                     break;
                 case "Name":
                     this.world.sortByName();
-                    this.textOutput.setText(this.world.toString());
+                    this.resultsOutput.setText(this.world.toString());
                     break;
                 case "Skill":
                     this.world.sortBySkill();
-                    this.textOutput.setText(this.world.toString());
+                    this.resultsOutput.setText(this.world.toString());
                     break;
                 case "Index":
                     this.world.sortByIndex();
-                    this.textOutput.setText(this.world.toString());
+                    this.resultsOutput.setText(this.world.toString());
                     break;
                 default:
                     break;
@@ -114,7 +118,6 @@ class SeaPortProgram extends JFrame {
             } else
                 showMessageDialog(null, "Search text or dropdown selection missing!", "Error", JOptionPane.ERROR_MESSAGE);
         } else showMessageDialog(null, "Please choose a file!", "Error", JOptionPane.ERROR_MESSAGE);
-
     }
 
 
@@ -204,7 +207,7 @@ class SeaPortProgram extends JFrame {
         // Panel initialization and setup
         JPanel panel = new JPanel(new BorderLayout());
         JPanel panelTop = new JPanel(new GridLayout(1, 5, 5, 5));
-        JPanel panelBottom = new JPanel(new GridLayout(1, 1));
+        JPanel panelBottom = new JPanel(new GridLayout(1, 2));
         panelBottom.setPreferredSize(new Dimension(500, 600));
 
         // Main text output area styling
@@ -212,6 +215,13 @@ class SeaPortProgram extends JFrame {
         this.textOutput.setEditable(false);
         this.textOutput.setFont(new java.awt.Font("Monospaced", Font.PLAIN, 12));
         this.textOutput.setLineWrap(true);
+
+        // Results text output area styling
+        this.resultsOutput = new JTextArea();
+        this.resultsOutput.setEditable(false);
+        this.resultsOutput.setFont(new java.awt.Font("Monospaced", Font.PLAIN, 12));
+        this.resultsOutput.setLineWrap(true);
+
 
         this.fileReadButton = new JButton("Select File");
 
@@ -228,6 +238,7 @@ class SeaPortProgram extends JFrame {
         this.sortButton = new JButton("Sort");
 
         JScrollPane scrollPane = new JScrollPane(this.textOutput);
+        JScrollPane resultsPane = new JScrollPane(this.resultsOutput);
 
         // Panel for the top menu bar
         panelTop.add(this.fileReadButton);
@@ -240,6 +251,7 @@ class SeaPortProgram extends JFrame {
         panelTop.add(this.sortButton);
 
         panelBottom.add(scrollPane);
+        panelBottom.add(resultsPane);
 
         panel.add(panelTop, BorderLayout.NORTH);
         panel.add(panelBottom, BorderLayout.SOUTH);
