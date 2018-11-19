@@ -87,14 +87,6 @@ class SeaPortProgram extends JFrame {
                     this.world.sortByName();
                     this.resultsOutput.setText(this.world.toString());
                     break;
-                case "Skill":
-                    this.world.sortBySkill();
-                    this.resultsOutput.setText(this.world.toString());
-                    break;
-                case "Index":
-                    this.world.sortByIndex();
-                    this.resultsOutput.setText(this.world.toString());
-                    break;
                 default:
                     break;
             }

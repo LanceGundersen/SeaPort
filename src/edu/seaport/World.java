@@ -13,7 +13,7 @@ import static java.lang.String.CASE_INSENSITIVE_ORDER;
  * The world class creates arrays of things and ports as well as provide various sorting methods.
  *
  * @author Lance Gundersen
- * @version 2.0
+ * @version 2.1
  * @since 2018-11-18
  */
 class World extends Thing {
@@ -32,24 +32,6 @@ class World extends Thing {
         this.setWorld(new ArrayList<>());
         this.setPorts(new ArrayList<>());
         this.process(scannerContents);
-    }
-
-    /**
-     * This method performs a sorting of world by index.
-     *
-     * @return Nothing.
-     */
-    void sortByIndex() {
-
-        if (getPorts().size() > 1)
-            getPorts().sort((port1, port2) -> (Integer.compare(port1.getIndex(), port2.getIndex())));
-
-        for (SeaPort seaPort : ports) {
-            seaPort.getQueue().sort((ship1, ship2) -> (Integer.compare(ship1.getIndex(), ship2.getIndex())));
-            seaPort.getShips().sort((ship1, ship2) -> (Integer.compare(ship1.getIndex(), ship2.getIndex())));
-            seaPort.getPersons().sort((person1, person2) -> (Integer.compare(person1.getIndex(), person2.getIndex())));
-            seaPort.getDocks().sort((dock1, dock2) -> (Integer.compare(dock1.getIndex(), dock2.getIndex())));
-        }
     }
 
     /**
@@ -99,21 +81,6 @@ class World extends Thing {
         for (SeaPort seaPort : ports) {
             seaPort.getQueue().sort((ship1, ship2) -> (Double.compare(ship1.getWidth(), ship2.getWidth())));
             seaPort.getShips().sort((ship1, ship2) -> (Double.compare(ship1.getWidth(), ship2.getWidth())));
-        }
-    }
-
-    /**
-     * This method performs a sorting of worlds people by skills.
-     *
-     * @return Nothing.
-     */
-    void sortBySkill() {
-
-        for (SeaPort seaPort : ports) {
-            seaPort.getPersons().sort((person1, person2) -> {
-                int res = CASE_INSENSITIVE_ORDER.compare(person1.getSkill(), person2.getSkill());
-                return (res != 0) ? res : person1.getSkill().compareTo(person2.getSkill());
-            });
         }
     }
 
