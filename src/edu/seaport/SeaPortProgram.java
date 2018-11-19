@@ -6,7 +6,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Objects;
+import java.util.Scanner;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -14,10 +15,10 @@ import static javax.swing.JOptionPane.showMessageDialog;
  * File SeaPortProgram.java
  * The SeaPortProgram implements an application that displays a GUI, allows a user to import a world file and
  * the user to scan said world file.
+ *
  * @author Lance Gundersen
  * @version 2.0
  * @since 2018-11-18
- *
  */
 
 class SeaPortProgram extends JFrame {
@@ -26,13 +27,14 @@ class SeaPortProgram extends JFrame {
     private World world;
     private JButton fileReadButton;
     private JButton searchButton, sortButton;
-    private JTextArea textOutput;
+    private JTextArea textOutput, resultsOutput;
     private TextField searchBox;
     private JComboBox<String> searchDropdown, sortDropdown;
 
     /**
      * Default Constructor which creates the GUI along with providing click handlers for reading in a file and
      * initializing world searching.
+     *
      * @return Nothing.
      */
     private SeaPortProgram() {
@@ -43,49 +45,8 @@ class SeaPortProgram extends JFrame {
     }
 
     /**
-     * This method sorts the world basedon the sort dropdown choice.
-     * @return Nothing.
-     */
-    private void sortBuilder() {
-        // Check if world has data.
-        if (this.world != null) {
-            switch(Objects.requireNonNull(this.sortDropdown.getSelectedItem()).toString()) {
-                case "Weight":
-                    this.world.sortByWeight();
-                    this.textOutput.setText(this.world.toString());
-                    break;
-                case "Length":
-                    this.world.sortByLength();
-                    this.textOutput.setText(this.world.toString());
-                    break;
-                case "Draft":
-                    this.world.sortByDraft();
-                    this.textOutput.setText(this.world.toString());
-                    break;
-                case "Width":
-                    this.world.sortByWidth();
-                    this.textOutput.setText(this.world.toString());
-                    break;
-                case "Name":
-                    this.world.sortByName();
-                    this.textOutput.setText(this.world.toString());
-                    break;
-                case "Skill":
-                    this.world.sortBySkill();
-                    this.textOutput.setText(this.world.toString());
-                    break;
-                case "Index":
-                    this.world.sortByIndex();
-                    this.textOutput.setText(this.world.toString());
-                    break;
-                default:
-                    break;
-            }
-        } else showMessageDialog(null, "Please choose a file!", "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    /**
      * This is the main method which calls the SeaPortProgram constructor.
+     *
      * @param args Unused.
      * @return Nothing.
      */
@@ -94,10 +55,50 @@ class SeaPortProgram extends JFrame {
     }
 
     /**
+     * This method sorts the world basedon the sort dropdown choice.
+     *
+     * @return Nothing.
+     */
+    private void sortBuilder() {
+        // Check if world has data.
+        if (this.world != null) {
+
+            if (this.resultsOutput != null)
+                this.resultsOutput.setText("");
+
+            switch (Objects.requireNonNull(this.sortDropdown.getSelectedItem()).toString()) {
+                case "Weight":
+                    this.world.sortByWeight();
+                    this.resultsOutput.setText(this.world.toString());
+                    break;
+                case "Length":
+                    this.world.sortByLength();
+                    this.resultsOutput.setText(this.world.toString());
+                    break;
+                case "Draft":
+                    this.world.sortByDraft();
+                    this.resultsOutput.setText(this.world.toString());
+                    break;
+                case "Width":
+                    this.world.sortByWidth();
+                    this.resultsOutput.setText(this.world.toString());
+                    break;
+                case "Name":
+                    this.world.sortByName();
+                    this.resultsOutput.setText(this.world.toString());
+                    break;
+                default:
+                    break;
+            }
+        } else showMessageDialog(null, "Please choose a file!", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
      * This method handles basic user input validation by ensuring the world isn't null along with handling
      * failed search results gracefully.
-     * @param searchText is the search text passed in by the action listener in the constructor.
-     *                   Has null checking to catch empty strings.
+     *
+     * @param searchText    is the search text passed in by the action listener in the constructor.
+     *                      Has null checking to catch empty strings.
      * @param dropdownIndex is the number value of the array option in the array list {0 = not used, 1 = name,
      *                      2 = index, 3 = skill}
      * @return Nothing.
@@ -114,13 +115,13 @@ class SeaPortProgram extends JFrame {
             } else
                 showMessageDialog(null, "Search text or dropdown selection missing!", "Error", JOptionPane.ERROR_MESSAGE);
         } else showMessageDialog(null, "Please choose a file!", "Error", JOptionPane.ERROR_MESSAGE);
-
     }
 
 
     /**
      * This method searches the world for strings and ints based on the search option type passed via
      * the GUI dropdown. It returns a set(s) of things or people based on search option passed.
+     *
      * @param searchText is the search text passed in by the action listener in the constructor.
      *                   Has null checking to catch empty strings.
      * @return String of parsed values related to input searchText.
@@ -176,6 +177,7 @@ class SeaPortProgram extends JFrame {
 
     /**
      * This method allows the user to open and scan and outputs it to the GUI and instantiates a new world.
+     *
      * @return Nothing.
      */
     private void scanFile() {
@@ -196,6 +198,7 @@ class SeaPortProgram extends JFrame {
 
     /**
      * This method creates the main GUI for the SeaPort Program. It leverages the BorderLayout.
+     *
      * @return Nothing.
      */
     private void createGui() {
@@ -204,7 +207,7 @@ class SeaPortProgram extends JFrame {
         // Panel initialization and setup
         JPanel panel = new JPanel(new BorderLayout());
         JPanel panelTop = new JPanel(new GridLayout(1, 5, 5, 5));
-        JPanel panelBottom = new JPanel(new GridLayout(1, 1));
+        JPanel panelBottom = new JPanel(new GridLayout(1, 2));
         panelBottom.setPreferredSize(new Dimension(500, 600));
 
         // Main text output area styling
@@ -212,6 +215,13 @@ class SeaPortProgram extends JFrame {
         this.textOutput.setEditable(false);
         this.textOutput.setFont(new java.awt.Font("Monospaced", Font.PLAIN, 12));
         this.textOutput.setLineWrap(true);
+
+        // Results text output area styling
+        this.resultsOutput = new JTextArea();
+        this.resultsOutput.setEditable(false);
+        this.resultsOutput.setFont(new java.awt.Font("Monospaced", Font.PLAIN, 12));
+        this.resultsOutput.setLineWrap(true);
+
 
         this.fileReadButton = new JButton("Select File");
 
@@ -222,12 +232,13 @@ class SeaPortProgram extends JFrame {
         this.searchButton = new JButton("Search");
 
         JLabel sortBoxLabel = new JLabel("Sort by:", JLabel.RIGHT);
-        String[] sortTypeComboBoxValues = new String[] {"Name", "Weight", "Length", "Width", "Draft"};
+        String[] sortTypeComboBoxValues = new String[]{"Name", "Weight", "Length", "Width", "Draft"};
         sortDropdown = new JComboBox<>(sortTypeComboBoxValues);
 
         this.sortButton = new JButton("Sort");
 
         JScrollPane scrollPane = new JScrollPane(this.textOutput);
+        JScrollPane resultsPane = new JScrollPane(this.resultsOutput);
 
         // Panel for the top menu bar
         panelTop.add(this.fileReadButton);
@@ -240,6 +251,7 @@ class SeaPortProgram extends JFrame {
         panelTop.add(this.sortButton);
 
         panelBottom.add(scrollPane);
+        panelBottom.add(resultsPane);
 
         panel.add(panelTop, BorderLayout.NORTH);
         panel.add(panelBottom, BorderLayout.SOUTH);

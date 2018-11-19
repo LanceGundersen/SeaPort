@@ -7,10 +7,10 @@ import java.util.Scanner;
  * File SeaPort.java
  * The seaport class contains arrays for docks, queue, ships and persons. As the project progresses the class
  * will be added to.
+ *
  * @author Lance Gundersen
  * @version 1.0
  * @since 2018-11-03
- *
  */
 class SeaPort extends Thing {
 
@@ -21,6 +21,7 @@ class SeaPort extends Thing {
 
     /**
      * Default Constructor.
+     *
      * @param scannerContents is the file contents to be scanned.
      * @return Nothing.
      */
@@ -32,40 +33,48 @@ class SeaPort extends Thing {
         this.setPersons(new ArrayList<>());
     }
 
-    /** Return all jobs list. */
-    private void setDocks(ArrayList<Dock> docks) {
-        this.docks = docks;
-    }
-
     ArrayList<Dock> getDocks() {
         return this.docks;
     }
 
-    /** Return all jobs list. */
-    private void setShips(ArrayList<Ship> ships) {
-        this.ships = ships;
+    /**
+     * Return all jobs list.
+     */
+    private void setDocks(ArrayList<Dock> docks) {
+        this.docks = docks;
     }
 
     ArrayList<Ship> getShips() {
         return this.ships;
     }
 
-    /** Return all jobs list. */
-    private void setQueue(ArrayList<Ship> queue) {
-        this.queue = queue;
+    /**
+     * Return all jobs list.
+     */
+    private void setShips(ArrayList<Ship> ships) {
+        this.ships = ships;
     }
 
     ArrayList<Ship> getQueue() {
         return this.queue;
     }
 
-    /** Return all persons list. */
-    private void setPersons(ArrayList<Person> persons) {
-        this.persons = persons;
+    /**
+     * Return all jobs list.
+     */
+    private void setQueue(ArrayList<Ship> queue) {
+        this.queue = queue;
     }
 
     ArrayList<Person> getPersons() {
         return this.persons;
+    }
+
+    /**
+     * Return all persons list.
+     */
+    private void setPersons(ArrayList<Person> persons) {
+        this.persons = persons;
     }
 
     public String toString() {

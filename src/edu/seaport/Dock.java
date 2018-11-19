@@ -5,10 +5,10 @@ import java.util.Scanner;
 /**
  * File Dock.java
  * The dock class contains dock objects. As the project progresses the class will be added to.
+ *
  * @author Lance Gundersen
  * @version 1.0
  * @since 2018-11-03
- *
  */
 class Dock extends Thing {
 
@@ -16,6 +16,7 @@ class Dock extends Thing {
 
     /**
      * Default Constructor.
+     *
      * @param scannerContents is the file contents to be scanned.
      * @return Nothing.
      */
@@ -23,12 +24,16 @@ class Dock extends Thing {
         super(scannerContents);
     }
 
-    /** Return all ship. */
+    /**
+     * Return all ship.
+     */
     Ship getShip() {
         return this.ship;
     }
 
-    /** Set ship. */
+    /**
+     * Set ship.
+     */
     void setShip(Ship ship) {
         this.ship = ship;
     }

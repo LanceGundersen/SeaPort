@@ -5,10 +5,10 @@ import java.util.Scanner;
 /**
  * File Person.java
  * The person class contains an array of skills. As the project progresses the class will be added to.
+ *
  * @author Lance Gundersen
  * @version 1.0
  * @since 2018-11-03
- *
  */
 class Person extends Thing {
 
@@ -16,6 +16,7 @@ class Person extends Thing {
 
     /**
      * Default Constructor.
+     *
      * @param scannerContents is the file contents to be scanned.
      * @return Nothing.
      */
@@ -25,14 +26,15 @@ class Person extends Thing {
         this.setSkill(scannerContents.next());
     }
 
+    /**
+     * Return all jobs list.
+     */
+    String getSkill() {
+        return this.skill;
+    }
 
     private void setSkill(String skill) {
         this.skill = skill;
-    }
-
-    /** Return all jobs list. */
-    String getSkill() {
-        return this.skill;
     }
 
     public String toString() {
