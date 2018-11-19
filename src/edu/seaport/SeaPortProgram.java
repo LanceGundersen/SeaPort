@@ -6,7 +6,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Objects;
+import java.util.Scanner;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -14,10 +15,10 @@ import static javax.swing.JOptionPane.showMessageDialog;
  * File SeaPortProgram.java
  * The SeaPortProgram implements an application that displays a GUI, allows a user to import a world file and
  * the user to scan said world file.
+ *
  * @author Lance Gundersen
  * @version 2.0
  * @since 2018-11-18
- *
  */
 
 class SeaPortProgram extends JFrame {
@@ -33,6 +34,7 @@ class SeaPortProgram extends JFrame {
     /**
      * Default Constructor which creates the GUI along with providing click handlers for reading in a file and
      * initializing world searching.
+     *
      * @return Nothing.
      */
     private SeaPortProgram() {
@@ -43,7 +45,18 @@ class SeaPortProgram extends JFrame {
     }
 
     /**
+     * This is the main method which calls the SeaPortProgram constructor.
+     *
+     * @param args Unused.
+     * @return Nothing.
+     */
+    public static void main(String[] args) {
+        new SeaPortProgram();
+    }
+
+    /**
      * This method sorts the world basedon the sort dropdown choice.
+     *
      * @return Nothing.
      */
     private void sortBuilder() {
@@ -53,7 +66,7 @@ class SeaPortProgram extends JFrame {
             if (this.resultsOutput != null)
                 this.resultsOutput.setText("");
 
-            switch(Objects.requireNonNull(this.sortDropdown.getSelectedItem()).toString()) {
+            switch (Objects.requireNonNull(this.sortDropdown.getSelectedItem()).toString()) {
                 case "Weight":
                     this.world.sortByWeight();
                     this.resultsOutput.setText(this.world.toString());
@@ -89,19 +102,11 @@ class SeaPortProgram extends JFrame {
     }
 
     /**
-     * This is the main method which calls the SeaPortProgram constructor.
-     * @param args Unused.
-     * @return Nothing.
-     */
-    public static void main(String[] args) {
-        new SeaPortProgram();
-    }
-
-    /**
      * This method handles basic user input validation by ensuring the world isn't null along with handling
      * failed search results gracefully.
-     * @param searchText is the search text passed in by the action listener in the constructor.
-     *                   Has null checking to catch empty strings.
+     *
+     * @param searchText    is the search text passed in by the action listener in the constructor.
+     *                      Has null checking to catch empty strings.
      * @param dropdownIndex is the number value of the array option in the array list {0 = not used, 1 = name,
      *                      2 = index, 3 = skill}
      * @return Nothing.
@@ -124,6 +129,7 @@ class SeaPortProgram extends JFrame {
     /**
      * This method searches the world for strings and ints based on the search option type passed via
      * the GUI dropdown. It returns a set(s) of things or people based on search option passed.
+     *
      * @param searchText is the search text passed in by the action listener in the constructor.
      *                   Has null checking to catch empty strings.
      * @return String of parsed values related to input searchText.
@@ -179,6 +185,7 @@ class SeaPortProgram extends JFrame {
 
     /**
      * This method allows the user to open and scan and outputs it to the GUI and instantiates a new world.
+     *
      * @return Nothing.
      */
     private void scanFile() {
@@ -199,6 +206,7 @@ class SeaPortProgram extends JFrame {
 
     /**
      * This method creates the main GUI for the SeaPort Program. It leverages the BorderLayout.
+     *
      * @return Nothing.
      */
     private void createGui() {
@@ -232,7 +240,7 @@ class SeaPortProgram extends JFrame {
         this.searchButton = new JButton("Search");
 
         JLabel sortBoxLabel = new JLabel("Sort by:", JLabel.RIGHT);
-        String[] sortTypeComboBoxValues = new String[] {"Name", "Weight", "Length", "Width", "Draft"};
+        String[] sortTypeComboBoxValues = new String[]{"Name", "Weight", "Length", "Width", "Draft"};
         sortDropdown = new JComboBox<>(sortTypeComboBoxValues);
 
         this.sortButton = new JButton("Sort");

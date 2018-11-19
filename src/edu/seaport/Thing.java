@@ -6,10 +6,10 @@ import java.util.Scanner;
 /**
  * File Thing.java
  * The thing class. As the project progresses the class will be added to.
+ *
  * @author Lance Gundersen
  * @version 1.0
  * @since 2018-11-03
- *
  */
 class Thing implements Comparable<Thing>, Comparator<Thing> {
     private int index;
@@ -32,10 +32,6 @@ class Thing implements Comparable<Thing>, Comparator<Thing> {
         if (scannerContents.hasNextInt()) {
             this.setParent(scannerContents.nextInt());
         }
-    }
-
-    Thing(String name) {
-        this.name = name;
     }
 
     /**

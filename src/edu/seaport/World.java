@@ -2,17 +2,19 @@ package edu.seaport;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
 /**
  * File World.java
  * The world class creates arrays of things and ports as well as provide various sorting methods.
+ *
  * @author Lance Gundersen
  * @version 2.0
  * @since 2018-11-18
- *
  */
 class World extends Thing {
 
@@ -21,6 +23,7 @@ class World extends Thing {
 
     /**
      * Default Constructor which creates the world.
+     *
      * @param scannerContents is the file contents to be scanned.
      * @return Nothing.
      */
@@ -33,11 +36,12 @@ class World extends Thing {
 
     /**
      * This method performs a sorting of world by index.
+     *
      * @return Nothing.
      */
     void sortByIndex() {
 
-        if(getPorts().size()>1)
+        if (getPorts().size() > 1)
             getPorts().sort((port1, port2) -> (Integer.compare(port1.getIndex(), port2.getIndex())));
 
         for (SeaPort seaPort : ports) {
@@ -50,6 +54,7 @@ class World extends Thing {
 
     /**
      * This method performs a sorting of worlds ships by weight.
+     *
      * @return Nothing.
      */
     void sortByWeight() {
@@ -62,6 +67,7 @@ class World extends Thing {
 
     /**
      * This method performs a sorting of worlds ships by length.
+     *
      * @return Nothing.
      */
     void sortByLength() {
@@ -74,6 +80,7 @@ class World extends Thing {
 
     /**
      * This method performs a sorting of worlds ships by draft.
+     *
      * @return Nothing.
      */
     void sortByDraft() {
@@ -85,6 +92,7 @@ class World extends Thing {
 
     /**
      * This method performs a sorting of worlds ships by draft.
+     *
      * @return Nothing.
      */
     void sortByWidth() {
@@ -96,6 +104,7 @@ class World extends Thing {
 
     /**
      * This method performs a sorting of worlds people by skills.
+     *
      * @return Nothing.
      */
     void sortBySkill() {
@@ -110,11 +119,12 @@ class World extends Thing {
 
     /**
      * This method performs a sorting of world by name.
+     *
      * @return Nothing.
      */
     void sortByName() {
 
-        if(getPorts().size()>1) {
+        if (getPorts().size() > 1) {
             getPorts().sort((port1, port2) -> {
                 int res = CASE_INSENSITIVE_ORDER.compare(port1.getName(), port2.getName());
                 return (res != 0) ? res : port1.getName().compareTo(port2.getName());
@@ -141,28 +151,37 @@ class World extends Thing {
         }
     }
 
-    /** Return all things list. */
+    /**
+     * Return all things list.
+     */
     ArrayList<Thing> getWorld() {
         return this.allThings;
     }
 
-    /** Set all things list. */
+    /**
+     * Set all things list.
+     */
     private void setWorld(ArrayList<Thing> allThings) {
         this.allThings = allThings;
     }
 
-    /** Return all ports list. */
+    /**
+     * Return all ports list.
+     */
     ArrayList<SeaPort> getPorts() {
         return this.ports;
     }
 
-    /** Set ports list. */
+    /**
+     * Set ports list.
+     */
     private void setPorts(ArrayList<SeaPort> ports) {
         this.ports = ports;
     }
 
     /**
      * This method handles scanning of a files contents for populating the world.
+     *
      * @param scannerContents is file contents passed into the world class.
      * @return Nothing.
      */
@@ -170,7 +189,8 @@ class World extends Thing {
 
         HashMap<Integer, SeaPort> portsMap = new HashMap<>();
         HashMap<Integer, Dock> docksMap = new HashMap<>();
-        HashMap<Integer, Ship> shipsMap; shipsMap = new HashMap<>();
+        HashMap<Integer, Ship> shipsMap;
+        shipsMap = new HashMap<>();
 
         while (scannerContents.hasNextLine()) {
             String lineString = scannerContents.nextLine().trim();
