@@ -1,5 +1,6 @@
 package edu.seaport;
 
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -254,6 +255,81 @@ class World extends Thing {
             myDock.setShip(newShip);
             myPort.getShips().add(newShip);
         }
+    }
+
+
+
+    <T extends Thing> DefaultMutableTreeNode toTree() {
+        DefaultMutableTreeNode parentNode, childNode;
+        Method getList;
+        ArrayList<T> thingsList;
+        DefaultMutableTreeNode mainNode = new DefaultMutableTreeNode("World");
+        HashMap<String, String> classMethodMap = new HashMap<>() {{
+            put("Docks", "getDocks");
+            put("Ships", "getShips");
+            put("Queue", "getQueue");
+            put("Persons", "getPersons");
+        }};
+
+        for (SeaPort newPort : this.getPorts()) {
+            parentNode = new DefaultMutableTreeNode(newPort.getName() + " (" + newPort.getIndex()
+                    + ")");
+            mainNode.add(parentNode);
+
+            for (HashMap.Entry<String, String> pair : classMethodMap.entrySet()) {
+                try {
+                    getList = SeaPort.class.getDeclaredMethod(pair.getValue());
+                    thingsList = (ArrayList<T>) getList.invoke(newPort);
+                    childNode = this.addBranch(pair.getKey(), thingsList);
+                    parentNode.add(childNode);
+                } catch (
+                        NoSuchMethodException |
+                                SecurityException |
+                                IllegalAccessException |
+                                IllegalArgumentException |
+                                InvocationTargetException ex
+                ) {
+                    System.out.println("Error: " + ex);
+                }
+            }
+        }
+
+        return mainNode;
+    }
+
+    private <T extends Thing> DefaultMutableTreeNode addBranch(String title, ArrayList<T> thingsList) {
+        String newThingName, childTitle;
+        DefaultMutableTreeNode childNode;
+        Dock thisDock;
+        Ship mooredShip, newShip;
+        DefaultMutableTreeNode parentNode = new DefaultMutableTreeNode(title);
+
+        for (T newThing : thingsList) {
+            newThingName = String.format("%s (%d)", newThing.getName(), newThing.getIndex());
+            childNode = new DefaultMutableTreeNode(newThingName);
+
+            if (!(newThing instanceof Dock)) {
+                if (newThing instanceof Ship) {
+                    newShip = (Ship) newThing;
+                    if (!newShip.getJobs().isEmpty()) {
+                        for (Job newJob : newShip.getJobs()) {
+                            childTitle = newJob.getName();
+                            childNode.add(new DefaultMutableTreeNode(childTitle));
+                        }
+                    }
+                }
+            } else {
+                thisDock = (Dock) newThing;
+                mooredShip = thisDock.getShip();
+                if (thisDock.getShip() != null) {
+                    childTitle = String.format("%s (%d)", mooredShip.getName(), mooredShip.getIndex());
+                    childNode.add(new DefaultMutableTreeNode(childTitle));
+                }
+            }
+            parentNode.add(childNode);
+        }
+
+        return parentNode;
     }
 
     public String toString() {

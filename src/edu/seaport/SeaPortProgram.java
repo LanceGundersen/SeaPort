@@ -1,6 +1,8 @@
 package edu.seaport;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,6 +32,7 @@ class SeaPortProgram extends JFrame {
     private JTextArea textOutput, resultsOutput;
     private TextField searchBox;
     private JComboBox<String> searchDropdown, sortDropdown;
+    private JTree coreTree;
 
     /**
      * Default Constructor which creates the GUI along with providing click handlers for reading in a file and
@@ -193,6 +196,7 @@ class SeaPortProgram extends JFrame {
             }
             this.world = new World(scanner);
             this.textOutput.setText(this.world.toString());
+            this.coreTree.setModel(new DefaultTreeModel(this.world.toTree()));
         }
     }
 
@@ -208,6 +212,7 @@ class SeaPortProgram extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         JPanel panelTop = new JPanel(new GridLayout(1, 5, 5, 5));
         JPanel panelBottom = new JPanel(new GridLayout(1, 2));
+        JTabbedPane tabbedPane = new JTabbedPane();
         panelBottom.setPreferredSize(new Dimension(500, 600));
 
         // Main text output area styling
@@ -215,15 +220,25 @@ class SeaPortProgram extends JFrame {
         this.textOutput.setEditable(false);
         this.textOutput.setFont(new java.awt.Font("Monospaced", Font.PLAIN, 12));
         this.textOutput.setLineWrap(true);
+        // Set Default Text
+        this.textOutput.setText("Please select a file to see the raw file displayed.");
 
         // Results text output area styling
         this.resultsOutput = new JTextArea();
         this.resultsOutput.setEditable(false);
         this.resultsOutput.setFont(new java.awt.Font("Monospaced", Font.PLAIN, 12));
         this.resultsOutput.setLineWrap(true);
-
-
+        // Set Default Text
+        this.resultsOutput.setText("Sort results are displayed here.");
         this.fileReadButton = new JButton("Select File");
+
+        // Tree View
+        this.coreTree = new JTree();
+        this.coreTree.setModel(null);
+        this.coreTree.getSelectionModel().setSelectionMode(
+                TreeSelectionModel.SINGLE_TREE_SELECTION
+        );
+
 
         JLabel searchBoxLabel = new JLabel("Search:", JLabel.RIGHT);
         this.searchBox = new TextField("", 10);
@@ -239,6 +254,7 @@ class SeaPortProgram extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(this.textOutput);
         JScrollPane resultsPane = new JScrollPane(this.resultsOutput);
+        JScrollPane treePane = new JScrollPane(this.coreTree);
 
         // Panel for the top menu bar
         panelTop.add(this.fileReadButton);
@@ -250,8 +266,10 @@ class SeaPortProgram extends JFrame {
         panelTop.add(this.sortDropdown);
         panelTop.add(this.sortButton);
 
-        panelBottom.add(scrollPane);
-        panelBottom.add(resultsPane);
+        tabbedPane.addTab("Raw Input File", scrollPane);
+        tabbedPane.addTab("Sorted Results", resultsPane);
+        tabbedPane.addTab("Tree View", treePane);
+        panelBottom.add(tabbedPane);
 
         panel.add(panelTop, BorderLayout.NORTH);
         panel.add(panelBottom, BorderLayout.SOUTH);
