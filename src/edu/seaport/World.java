@@ -4,6 +4,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -42,8 +43,8 @@ class World extends Thing {
      */
     void sortByWeight() {
         for (SeaPort seaPort : ports) {
-            seaPort.getQueue().sort((ship1, ship2) -> (Double.compare(ship1.getWeight(), ship2.getWeight())));
-            seaPort.getShips().sort((ship1, ship2) -> (Double.compare(ship1.getWeight(), ship2.getWeight())));
+            seaPort.getQueue().sort(Comparator.comparingDouble(Ship::getWeight));
+            seaPort.getShips().sort(Comparator.comparingDouble(Ship::getWeight));
         }
     }
 
@@ -56,8 +57,8 @@ class World extends Thing {
     void sortByLength() {
 
         for (SeaPort seaPort : ports) {
-            seaPort.getQueue().sort((ship1, ship2) -> (Double.compare(ship1.getLength(), ship2.getLength())));
-            seaPort.getShips().sort((ship1, ship2) -> (Double.compare(ship1.getLength(), ship2.getLength())));
+            seaPort.getQueue().sort(Comparator.comparingDouble(Ship::getLength));
+            seaPort.getShips().sort(Comparator.comparingDouble(Ship::getLength));
         }
     }
 
@@ -68,8 +69,8 @@ class World extends Thing {
      */
     void sortByDraft() {
         for (SeaPort seaPort : ports) {
-            seaPort.getQueue().sort((ship1, ship2) -> (Double.compare(ship1.getDraft(), ship2.getDraft())));
-            seaPort.getShips().sort((ship1, ship2) -> (Double.compare(ship1.getDraft(), ship2.getDraft())));
+            seaPort.getQueue().sort(Comparator.comparingDouble(Ship::getDraft));
+            seaPort.getShips().sort(Comparator.comparingDouble(Ship::getDraft));
         }
     }
 
@@ -80,8 +81,8 @@ class World extends Thing {
      */
     void sortByWidth() {
         for (SeaPort seaPort : ports) {
-            seaPort.getQueue().sort((ship1, ship2) -> (Double.compare(ship1.getWidth(), ship2.getWidth())));
-            seaPort.getShips().sort((ship1, ship2) -> (Double.compare(ship1.getWidth(), ship2.getWidth())));
+            seaPort.getQueue().sort(Comparator.comparingDouble(Ship::getWidth));
+            seaPort.getShips().sort(Comparator.comparingDouble(Ship::getWidth));
         }
     }
 
@@ -258,7 +259,7 @@ class World extends Thing {
     }
 
 
-
+    @SuppressWarnings("unchecked") // No other way I have found besides suppressing the warning.
     <T extends Thing> DefaultMutableTreeNode toTree() {
         DefaultMutableTreeNode parentNode, childNode;
         Method getList;
