@@ -122,6 +122,8 @@ final class Job extends Thing implements Runnable {
         rowLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         this.jobProgress = new JProgressBar();
         this.jobProgress.setStringPainted(true);
+        this.jobProgress.setBackground(Color.decode("#F8FAFF"));
+        this.jobProgress.setForeground(Color.decode("#fff"));
         this.suspendButton = new JButton("Suspend");
         JButton cancelButton = new JButton("Cancel");
         this.suspendButton.addActionListener((ActionEvent e) -> this.toggleSuspendFlag());
@@ -150,19 +152,19 @@ final class Job extends Thing implements Runnable {
     private void showStatus(Status status) {
         switch (status) {
             case RUNNING:
-                this.suspendButton.setBackground(Color.GREEN);
+                this.suspendButton.setBackground(Color.decode("#2EC4B6"));
                 this.suspendButton.setText("Running");
                 break;
             case SUSPENDED:
-                this.suspendButton.setBackground(Color.YELLOW);
+                this.suspendButton.setBackground(Color.decode("#D81159"));
                 this.suspendButton.setText("Suspended");
                 break;
             case WAITING:
-                this.suspendButton.setBackground(Color.ORANGE);
+                this.suspendButton.setBackground(Color.decode("#FFBC42"));
                 this.suspendButton.setText("Waiting");
                 break;
             case DONE:
-                this.suspendButton.setBackground(Color.RED);
+                this.suspendButton.setBackground(Color.decode("#218380"));
                 this.suspendButton.setText("Done");
                 break;
         }

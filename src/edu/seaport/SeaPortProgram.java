@@ -243,7 +243,7 @@ class SeaPortProgram extends JFrame {
         JPanel panelTop = new JPanel(new GridLayout(1, 5, 5, 5));
         JPanel panelBottom = new JPanel(new GridLayout(1, 2));
         JTabbedPane tabbedPane = new JTabbedPane();
-        panelBottom.setPreferredSize(new Dimension(500, 600));
+        panelBottom.setPreferredSize(new Dimension(1000, 600));
 
         // Main text output area styling
         this.textOutput = new JTextArea();
@@ -288,6 +288,7 @@ class SeaPortProgram extends JFrame {
         JScrollPane resultsPane = new JScrollPane(this.resultsOutput);
         JScrollPane treePane = new JScrollPane(this.coreTree);
         JScrollPane jobsPane = new JScrollPane(this.jobsOutput);
+        jobsPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         // Panel for the top menu bar
         panelTop.add(this.fileReadButton);
