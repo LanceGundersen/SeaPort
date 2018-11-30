@@ -33,6 +33,7 @@ class SeaPortProgram extends JFrame {
     private TextField searchBox;
     private JComboBox<String> searchDropdown, sortDropdown;
     private JTree coreTree;
+    private JPanel jobsOutput;
 
     /**
      * Default Constructor which creates the GUI along with providing click handlers for reading in a file and
@@ -239,6 +240,8 @@ class SeaPortProgram extends JFrame {
                 TreeSelectionModel.SINGLE_TREE_SELECTION
         );
 
+        // Jobs View
+        this.jobsOutput = new JPanel(new GridLayout(0, 1));
 
         JLabel searchBoxLabel = new JLabel("Search:", JLabel.RIGHT);
         this.searchBox = new TextField("", 10);
@@ -255,6 +258,7 @@ class SeaPortProgram extends JFrame {
         JScrollPane scrollPane = new JScrollPane(this.textOutput);
         JScrollPane resultsPane = new JScrollPane(this.resultsOutput);
         JScrollPane treePane = new JScrollPane(this.coreTree);
+        JScrollPane jobsPane = new JScrollPane(this.jobsOutput);
 
         // Panel for the top menu bar
         panelTop.add(this.fileReadButton);
@@ -269,6 +273,7 @@ class SeaPortProgram extends JFrame {
         tabbedPane.addTab("Raw Input File", scrollPane);
         tabbedPane.addTab("Sorted Results", resultsPane);
         tabbedPane.addTab("Tree View", treePane);
+        tabbedPane.addTab("Jobs", jobsPane);
         panelBottom.add(tabbedPane);
 
         panel.add(panelTop, BorderLayout.NORTH);
