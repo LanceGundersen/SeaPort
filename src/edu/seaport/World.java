@@ -183,13 +183,13 @@ class World extends Thing {
                         docksMap.put(newDock.getIndex(), newDock);
                         break;
                     case "pship":
-                        PassengerShip newPassengerShip = new PassengerShip(lineContents);
+                        PassengerShip newPassengerShip = new PassengerShip(lineContents, docksMap, portsMap);
                         this.getWorld().add(newPassengerShip);
                         this.addShipToParent(newPassengerShip, docksMap, portsMap);
                         shipsMap.put(newPassengerShip.getIndex(), newPassengerShip);
                         break;
                     case "cship":
-                        CargoShip newCargoShip = new CargoShip(lineContents);
+                        CargoShip newCargoShip = new CargoShip(lineContents, docksMap, portsMap);
                         this.getWorld().add(newCargoShip);
                         this.addShipToParent(newCargoShip, docksMap, portsMap);
                         shipsMap.put(newCargoShip.getIndex(), newCargoShip);
@@ -200,7 +200,7 @@ class World extends Thing {
                         this.addThingToList(portsMap, newPerson, "getPersons");
                         break;
                     case "job":
-                        Job newJob = new Job(lineContents);
+                        Job newJob = new Job(lineContents, shipsMap);
                         this.getWorld().add(newJob);
                         this.addJobToShip(newJob, shipsMap, docksMap);
                         break;
@@ -259,7 +259,8 @@ class World extends Thing {
     }
 
 
-    @SuppressWarnings("unchecked") // No other way I have found besides suppressing the warning.
+    @SuppressWarnings("unchecked")
+        // No other way I have found besides suppressing the warning.
     <T extends Thing> DefaultMutableTreeNode toTree() {
         DefaultMutableTreeNode parentNode, childNode;
         Method getList;

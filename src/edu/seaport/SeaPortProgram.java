@@ -58,6 +58,34 @@ class SeaPortProgram extends JFrame {
         new SeaPortProgram();
     }
 
+    private void startAllJobs() {
+        for (SeaPort port : this.world.getPorts()) {
+            for (Dock dock : port.getDocks()) {
+                if (dock.getShip().getJobs().isEmpty()) {
+                    dock.setShip(null);
+                    while (!port.getQueue().isEmpty()) {
+                        Ship newShip = port.getQueue().remove(0);
+                        if (!newShip.getJobs().isEmpty()) {
+                            dock.setShip(newShip);
+                            break;
+                        }
+                    }
+                }
+                dock.getShip().setDock(dock);
+            }
+
+            for (Ship ship : port.getShips())
+                if (!ship.getJobs().isEmpty()) {
+                    for (Job job : ship.getJobs()) {
+                        this.jobsOutput.add(job.getJobAsPanel());
+                        this.jobsOutput.revalidate();
+                        this.jobsOutput.repaint();
+                        job.startJob();
+                    }
+                }
+        }
+    }
+
     /**
      * This method sorts the world basedon the sort dropdown choice.
      *
@@ -198,6 +226,7 @@ class SeaPortProgram extends JFrame {
             this.world = new World(scanner);
             this.textOutput.setText(this.world.toString());
             this.coreTree.setModel(new DefaultTreeModel(this.world.toTree()));
+            this.startAllJobs();
         }
     }
 

@@ -14,6 +14,8 @@ class Person extends Thing {
 
     private String skill;
 
+    private boolean isWorking;
+
     /**
      * Default Constructor.
      *
@@ -24,6 +26,16 @@ class Person extends Thing {
         super(scannerContents);
         if (!scannerContents.hasNext()) this.setSkill("Error");
         this.setSkill(scannerContents.next());
+
+        this.setIsWorking(false);
+    }
+
+    boolean getIsWorking() {
+        return this.isWorking;
+    }
+
+    void setIsWorking(boolean isWorking) {
+        this.isWorking = isWorking;
     }
 
     /**

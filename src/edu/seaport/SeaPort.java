@@ -33,6 +33,54 @@ class SeaPort extends Thing {
         this.setPersons(new ArrayList<>());
     }
 
+    synchronized ArrayList<Person> getResources(Job job) {
+        int counter;
+        ArrayList<Person> candidates;
+        boolean areAllRequirementsMet;
+        counter = this.checkForQualifiedWorkers(job.getRequirements());
+        candidates = new ArrayList<>();
+        areAllRequirementsMet = true;
+        if (counter < job.getRequirements().size()) return new ArrayList<>();
+        outerLoop:
+        for (String requirement : job.getRequirements()) {
+            for (Person person : this.getPersons()) {
+                if (person.getSkill().equals(requirement) && !person.getIsWorking()) {
+                    person.setIsWorking(true);
+                    candidates.add(person);
+                    continue outerLoop;
+                }
+            }
+            areAllRequirementsMet = false;
+            break;
+        }
+
+        if (areAllRequirementsMet) {
+            return candidates;
+        } else {
+            this.returnResources(candidates);
+            return null;
+        }
+    }
+
+    synchronized void returnResources(ArrayList<Person> resources) {
+        resources.forEach((worker) -> worker.setIsWorking(false));
+    }
+
+    private synchronized int checkForQualifiedWorkers(ArrayList<String> requirements) {
+        int counter = 0;
+        outerLoop:
+        for (String requirement : requirements) {
+            for (Person worker : this.getPersons()) {
+                if (requirement.equals(worker.getSkill())) {
+                    counter++;
+                    continue outerLoop;
+                }
+            }
+        }
+        return counter;
+    }
+
+
     ArrayList<Dock> getDocks() {
         return this.docks;
     }

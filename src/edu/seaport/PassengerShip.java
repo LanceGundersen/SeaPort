@@ -1,5 +1,6 @@
 package edu.seaport;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 /**
@@ -20,19 +21,16 @@ class PassengerShip extends Ship {
      * @param scannerContents is the file contents to be scanned.
      * @return Nothing.
      */
-    PassengerShip(Scanner scannerContents) {
-        super(scannerContents);
-        if (scannerContents.hasNextInt()) {
-            this.setNumberOfPassengers(scannerContents.nextInt());
-        }
+    PassengerShip(Scanner scannerContents, HashMap<Integer, Dock> docksMap,
+                  HashMap<Integer, SeaPort> portsMap) {
 
-        if (scannerContents.hasNextInt()) {
-            this.setNumberOfRooms(scannerContents.nextInt());
-        }
+        super(scannerContents, docksMap, portsMap);
 
-        if (scannerContents.hasNextInt()) {
-            this.setNumberOfOccupiedRooms(scannerContents.nextInt());
-        }
+        if (scannerContents.hasNextInt()) this.setNumberOfPassengers(scannerContents.nextInt());
+
+        if (scannerContents.hasNextInt()) this.setNumberOfRooms(scannerContents.nextInt());
+
+        if (scannerContents.hasNextInt()) this.setNumberOfOccupiedRooms(scannerContents.nextInt());
     }
 
     private int getNumberOfPassengers() {

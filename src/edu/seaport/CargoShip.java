@@ -1,5 +1,6 @@
 package edu.seaport;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 /**
@@ -20,16 +21,16 @@ class CargoShip extends Ship {
      * @param scannerContents is the file contents to be scanned.
      * @return Nothing.
      */
-    CargoShip(Scanner scannerContents) {
+    CargoShip(Scanner scannerContents, HashMap<Integer, Dock> docksMap,
+              HashMap<Integer, SeaPort> portsMap) {
 
-        super(scannerContents);
+        super(scannerContents, docksMap, portsMap);
 
-        if (scannerContents.hasNextDouble()) {
-            this.setCargoWeight(scannerContents.nextDouble());
-            this.setCargoVolume(scannerContents.nextDouble());
-            this.setCargoValue(scannerContents.nextDouble());
-        }
+        if (scannerContents.hasNextDouble()) this.setCargoWeight(scannerContents.nextDouble());
 
+        if (scannerContents.hasNextDouble()) this.setCargoVolume(scannerContents.nextDouble());
+
+        if (scannerContents.hasNextDouble()) this.setCargoValue(scannerContents.nextDouble());
     }
 
     private double getCargoWeight() {
