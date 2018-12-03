@@ -15,12 +15,12 @@ import static javax.swing.JOptionPane.showMessageDialog;
 
 /**
  * File SeaPortProgram.java
- * The SeaPortProgram implements an application that displays a GUI, allows a user to import a world file and
- * the user to scan said world file.
+ * The SeaPortProgram implements an application that displays a GUI, allows a user to import a world file, scan, view
+ * a tree and view job processing status.
  *
  * @author Lance Gundersen
- * @version 2.0
- * @since 2018-11-18
+ * @version 3.0
+ * @since 2018-12-02
  */
 
 class SeaPortProgram extends JFrame {

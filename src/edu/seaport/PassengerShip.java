@@ -5,11 +5,11 @@ import java.util.Scanner;
 
 /**
  * File PassengerShip.java
- * As the project progresses the class will be added to.
+ * The passengerShip class contains an number of rooms (both occupied and total) and number of passengers.
  *
  * @author Lance Gundersen
- * @version 1.0
- * @since 2018-11-03
+ * @version 2.0
+ * @since 2018-12-02
  */
 class PassengerShip extends Ship {
 
@@ -19,6 +19,8 @@ class PassengerShip extends Ship {
      * Default Constructor.
      *
      * @param scannerContents is the file contents to be scanned.
+     * @param docksMap hashmap of docks
+     * @param portsMap hashmap of ports
      * @return Nothing.
      */
     PassengerShip(Scanner scannerContents, HashMap<Integer, Dock> docksMap,
@@ -33,26 +35,50 @@ class PassengerShip extends Ship {
         if (scannerContents.hasNextInt()) this.setNumberOfOccupiedRooms(scannerContents.nextInt());
     }
 
+    /**
+     * Returns number of passengers.
+     * @return int
+     */
     private int getNumberOfPassengers() {
         return this.numberOfPassengers;
     }
 
+    /**
+     * Set number of passengers.
+     * @param numberOfPassengers int
+     */
     private void setNumberOfPassengers(int numberOfPassengers) {
         this.numberOfPassengers = numberOfPassengers;
     }
 
+    /**
+     * Returns number of rooms.
+     * @return int
+     */
     private int getNumberOfRooms() {
         return this.numberOfRooms;
     }
 
+    /**
+     * Set number of rooms.
+     * @param numberOfRooms int
+     */
     private void setNumberOfRooms(int numberOfRooms) {
         this.numberOfRooms = numberOfRooms;
     }
 
+    /**
+     * Returns number of occupied rooms.
+     * @return int
+     */
     private int getNumberOfOccupiedRooms() {
         return this.numberOfOccupiedRooms;
     }
 
+    /**
+     * Set number of occupied rooms.
+     * @param numberOfOccupiedRooms int
+     */
     private void setNumberOfOccupiedRooms(int numberOfOccupiedRooms) {
         this.numberOfOccupiedRooms = numberOfOccupiedRooms;
     }

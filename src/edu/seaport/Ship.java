@@ -6,11 +6,11 @@ import java.util.Scanner;
 
 /**
  * File Ship.java
- * The ship class contains an array of jobs and sets ship draft, length, weight and width in the constructor.
+ * The ship class contains an array of jobs and docks and sets ship draft, length, weight and width.
  *
  * @author Lance Gundersen
- * @version 2.0
- * @since 2018-11-19
+ * @version 3.0
+ * @since 2018-12-02
  */
 class Ship extends Thing {
     private double draft, length, weight, width;
@@ -39,7 +39,13 @@ class Ship extends Thing {
         this.setDock();
     }
 
-
+    /**
+     * Set this port using world hashmap
+     *
+     * @param docksMap docks hashmap
+     * @param portsMap ports hashmap
+     * @return void
+     */
     private void setPort(HashMap<Integer, Dock> docksMap, HashMap<Integer, SeaPort> portsMap) {
         this.port = portsMap.get(this.getParent());
         if (this.port == null) {
@@ -55,62 +61,113 @@ class Ship extends Thing {
         return this.jobs;
     }
 
+    /**
+     * Set ship weight.
+     * @param  jobs ArrayList
+     */
     private void setJobs(ArrayList<Job> jobs) {
         this.jobs = jobs;
     }
 
+    /**
+     * Return ship weight.
+     */
     double getWeight() {
         return this.weight;
     }
 
+    /**
+     * Set ship weight.
+     * @param  weight double
+     */
     private void setWeight(double weight) {
         this.weight = weight;
     }
 
+    /**
+     * Return ship length.
+     */
     double getLength() {
         return this.length;
     }
 
+    /**
+     * Set ship length.
+     * @param  length double
+     */
     private void setLength(double length) {
         this.length = length;
     }
 
+    /**
+     * Return ship width.
+     */
     double getWidth() {
         return this.width;
     }
 
+    /**
+     * Set ship width.
+     * @param  width double
+     */
     private void setWidth(double width) {
         this.width = width;
     }
 
+    /**
+     * Return ship draft.
+     */
     double getDraft() {
         return this.draft;
     }
 
+    /**
+     * Set draft.
+     * @param draft double
+     */
     private void setDraft(double draft) {
         this.draft = draft;
     }
 
+    /**
+     * Set dock to this dock.
+     */
     private void setDock() {
         this.dock = this.getDocksMap().getOrDefault(this.getParent(), null);
     }
 
+    /**
+     * Return ship dock.
+     */
     Dock getDock() {
         return this.dock;
     }
 
+    /**
+     * Set dock.
+     * @param dock a Dock
+     */
     void setDock(Dock dock) {
         this.dock = dock;
     }
 
+    /**
+     * Return ship port.
+     */
     SeaPort getPort() {
         return this.port;
     }
 
+    /**
+     * Return docks list.
+     */
     private HashMap<Integer, Dock> getDocksMap() {
         return this.docksMap;
     }
 
+    /**
+     * Set docks list.
+     */
     private void setDocksMap(HashMap<Integer, Dock> docksMap) {
         this.docksMap = docksMap;
     }

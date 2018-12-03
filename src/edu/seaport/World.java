@@ -12,11 +12,12 @@ import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
 /**
  * File World.java
- * The world class creates arrays of things and ports as well as provide various sorting methods.
+ * The world class creates arrays of things and ports, provides various sorting methods and support for outputting
+ * file trees.
  *
  * @author Lance Gundersen
- * @version 2.1
- * @since 2018-11-18
+ * @version 3
+ * @since 2018-12-02
  */
 class World extends Thing {
 
@@ -128,7 +129,8 @@ class World extends Thing {
     }
 
     /**
-     * Set all things list.
+     * Set all world list.
+     * @param allThings
      */
     private void setWorld(ArrayList<Thing> allThings) {
         this.allThings = allThings;
@@ -143,6 +145,7 @@ class World extends Thing {
 
     /**
      * Set ports list.
+     * @param ports
      */
     private void setPorts(ArrayList<SeaPort> ports) {
         this.ports = ports;
@@ -211,6 +214,15 @@ class World extends Thing {
         }
     }
 
+
+    /**
+     * This method adds things to a list.
+     *
+     * @param portsMap is the ports hashmap
+     * @param newThing is a new thing
+     * @param methodName is the declared method name
+     * @return Nothing.
+     */
     @SuppressWarnings("unchecked") // No other way I have found besides suppressing the warning.
     private <T extends Thing> void addThingToList(HashMap<Integer, SeaPort> portsMap, T newThing, String methodName) {
 
@@ -231,17 +243,34 @@ class World extends Thing {
         }
     }
 
+    /**
+     * This method checks for moored ships and adds the job to said ship.
+     *
+     * @param newJob is the new job
+     * @param shipsMap is the ships hashmap
+     * @param docksMap is the docks hashmap
+     * @return Nothing.
+     */
     private void addJobToShip(Job newJob, HashMap<Integer, Ship> shipsMap, HashMap<Integer, Dock> docksMap) {
 
         Ship newShip = shipsMap.get(newJob.getParent());
 
-        if (newShip != null) newShip.getJobs().add(newJob);
-        else {
+        if (newShip != null) {
+            newShip.getJobs().add(newJob);
+        } else {
             Dock newDock = docksMap.get(newJob.getParent());
             newDock.getShip().getJobs().add(newJob);
         }
     }
 
+    /**
+     * This method adds a ship to a queue or to a dock code.
+     *
+     * @param newShip is the new job
+     * @param docksMap is the docks hashmap
+     * @param portsMap is the ports hashmap
+     * @return Nothing.
+     */
     private void addShipToParent(Ship newShip, HashMap<Integer, Dock> docksMap, HashMap<Integer, SeaPort> portsMap) {
 
         SeaPort myPort;
@@ -258,9 +287,12 @@ class World extends Thing {
         }
     }
 
-
-    @SuppressWarnings("unchecked")
-        // No other way I have found besides suppressing the warning.
+    /**
+     * This method returns a tree based on the world.
+     *
+     * @return DefaultMutableTreeNode.
+     */
+    @SuppressWarnings("unchecked") // No other way I have found besides suppressing the warning.
     <T extends Thing> DefaultMutableTreeNode toTree() {
         DefaultMutableTreeNode parentNode, childNode;
         Method getList;
@@ -299,6 +331,13 @@ class World extends Thing {
         return mainNode;
     }
 
+    /**
+     * This method returns a tree branch of each SeaPort.
+     *
+     * @param title variable to set the title of the branch
+     * @param thingsList the contents of an ArrayList
+     * @return DefaultMutableTreeNode.
+     */
     private <T extends Thing> DefaultMutableTreeNode addBranch(String title, ArrayList<T> thingsList) {
         String newThingName, childTitle;
         DefaultMutableTreeNode childNode;

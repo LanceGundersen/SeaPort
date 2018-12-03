@@ -7,6 +7,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+/**
+ * File Job.java
+ * The job class contains arrays of requirements and multithreading for handling jobs for ships. Contains methods that
+ * support returning job status to the GUI in the format of a panel.
+ *
+ * @author Lance Gundersen
+ * @version 2.0
+ * @since 2018-12-02
+ */
 final class Job extends Thing implements Runnable {
     private double duration;
     private ArrayList<String> requirements;
@@ -17,6 +26,13 @@ final class Job extends Thing implements Runnable {
     private ArrayList<Person> workers;
     private JButton suspendButton;
     private JProgressBar jobProgress;
+
+    /**
+     * Default Constructor.
+     * @param scannerContents is the file contents to be scanned.
+     * @param shipsMap ships hashmap
+     * @return Nothing.
+     */
     Job(Scanner scannerContents, HashMap<Integer, Ship> shipsMap) {
         super(scannerContents);
         if (scannerContents.hasNextDouble()) this.setDuration(scannerContents.nextDouble());
@@ -28,90 +44,164 @@ final class Job extends Thing implements Runnable {
         this.setIsSuspended(false);
         this.setIsCancelled(false);
         this.setIsFinished(false);
-        this.setStatus();
         this.setJobThread(new Thread(this));
         this.setIsEndex();
     }
 
-    private void setStatus() {
-    }
-
+    /**
+     * Sets endex.
+     */
     private void setIsEndex() {
         this.isEndex = false;
     }
 
+    /**
+     * Return job duration.
+     */
     private double getDuration() {
         return this.duration;
     }
 
+    /**
+     * Sets job duration.
+     *
+     * @param duration double
+     */
     private void setDuration(double duration) {
         this.duration = duration;
     }
 
+    /**
+     * Return list of job requirements.
+     */
     ArrayList<String> getRequirements() {
         return this.requirements;
     }
 
+    /**
+     * Sets requirements list.
+     *
+     * @param requirements ArrayList
+     */
     private void setRequirements(ArrayList<String> requirements) {
         this.requirements = requirements;
     }
 
+    /**
+     * Returns parent ship.
+     */
     private Ship getParentShip() {
         return this.parentShip;
     }
 
+    /**
+     * Sets parent ship.
+     *
+     * @param parentShip Ship
+     */
     private void setParentShip(Ship parentShip) {
         this.parentShip = parentShip;
     }
 
+    /**
+     * Returns parent port.
+     */
     private SeaPort getParentPort() {
         return this.parentPort;
     }
 
+    /**
+     * Sets parent port.
+     *
+     * @param parentPort SeaPort
+     */
     private void setParentPort(SeaPort parentPort) {
         this.parentPort = parentPort;
     }
 
+    /**
+     * Returns workers list.
+     */
     private ArrayList<Person> getWorkers() {
         return this.workers;
     }
 
+    /**
+     * Sets workers list.
+     *
+     * @param workers ArrayList
+     */
     private void setWorkers(ArrayList<Person> workers) {
         this.workers = workers;
     }
 
+    /**
+     * Returns boolean whether the job is suspended.
+     */
     private boolean getIsSuspended() {
         return !this.isSuspended;
     }
 
+    /**
+     * Sets job suspension status.
+     *
+     * @param isSuspended boolean
+     */
     private void setIsSuspended(boolean isSuspended) {
         this.isSuspended = isSuspended;
     }
 
+    /**
+     * Returns boolean whether the job is cancelled.
+     */
     private boolean getIsCancelled() {
         return this.isCancelled;
     }
 
+    /**
+     * Sets job cancellation status.
+     *
+     * @param isCancelled boolean
+     */
     private void setIsCancelled(boolean isCancelled) {
         this.isCancelled = isCancelled;
     }
 
+    /**
+     * Returns boolean whether the job is finished.
+     */
     private boolean getIsFinished() {
         return this.isFinished;
     }
 
+    /**
+     * Sets job finished status.
+     *
+     * @param isFinished boolean
+     */
     private void setIsFinished(boolean isFinished) {
         this.isFinished = isFinished;
     }
 
+    /**
+     * Returns thread for job.
+     */
     private Thread getJobThread() {
         return this.jobThread;
     }
 
+    /**
+     * Sets job thread status.
+     *
+     * @param jobThread Thread
+     */
     private void setJobThread(Thread jobThread) {
         this.jobThread = jobThread;
     }
 
+    /**
+     * Returns boolean whether the job is endex or not.
+     */
     private boolean getIsEndex() {
         return this.isEndex;
     }
@@ -135,11 +225,21 @@ final class Job extends Thing implements Runnable {
         return rowPanel;
     }
 
+    /**
+     * Method for kicking off threads
+     *
+     * @return nothing
+     */
     void startJob() {
         this.setIsFinished(false);
         this.getJobThread().start();
     }
 
+    /**
+     * Method for toggling suspend boolean via click handler.
+     *
+     * @return nothing
+     */
     private void toggleSuspendFlag() {
         this.setIsSuspended(this.getIsSuspended());
     }
@@ -149,6 +249,12 @@ final class Job extends Thing implements Runnable {
         this.setIsFinished(true);
     }
 
+    /**
+     * Method for handling GUI color and text based on status.
+     *
+     * @param status enum value
+     * @return nothing
+     */
     private void showStatus(Status status) {
         switch (status) {
             case RUNNING:
@@ -170,6 +276,11 @@ final class Job extends Thing implements Runnable {
         }
     }
 
+    /**
+     * Method for handling thread notifyAll() calls gracefully handle queue and pier matching for job handling.
+     *
+     * @return boolean flag
+     */
     private synchronized boolean isWaiting() {
         ArrayList<Person> dockWorkers;
         if (this.getParentPort().getQueue().contains(this.getParentShip())) {
@@ -189,16 +300,20 @@ final class Job extends Thing implements Runnable {
         }
     }
 
+    /**
+     * Overriden method for supporting the runnable interface. Handles dock to ship mapping and main synchroiziation
+     * employment for the handling of the ships/jobs.
+     *
+     * @return nothing
+     */
     public void run() {
-        long time, startTime, stopTime;
-        double timeNeeded;
         ArrayList<Boolean> statusList;
         Ship newShipToMoor;
         Dock parentDock;
-        time = System.currentTimeMillis();
-        startTime = time;
-        stopTime = time + 1000 * (long) this.getDuration();
-        timeNeeded = stopTime - time;
+        long time = System.currentTimeMillis();
+        long startTime = time;
+        long stopTime = time + 1000 * (long) this.getDuration();
+        double timeNeeded = stopTime - time;
 
         synchronized (this.getParentPort()) {
             while (this.isWaiting()) {
@@ -211,7 +326,7 @@ final class Job extends Thing implements Runnable {
             }
         }
 
-        while (time < stopTime && !this.getIsCancelled()) {
+        while ((time < stopTime) && !this.getIsCancelled()) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -235,9 +350,8 @@ final class Job extends Thing implements Runnable {
         }
 
         synchronized (this.getParentPort()) {
-            if (!this.getRequirements().isEmpty() && !this.getWorkers().isEmpty()) {
+            if (!this.getRequirements().isEmpty() && !this.getWorkers().isEmpty())
                 this.getParentPort().returnResources(this.getWorkers());
-            }
 
             statusList = new ArrayList<>();
             this.getParentShip().getJobs().forEach((job) -> statusList.add(job.getIsFinished()));

@@ -4,11 +4,11 @@ import java.util.Scanner;
 
 /**
  * File Person.java
- * The person class contains an array of skills. As the project progresses the class will be added to.
+ * The person class contains an array of skills and person(s) working status.
  *
  * @author Lance Gundersen
- * @version 1.0
- * @since 2018-11-03
+ * @version 2.0
+ * @since 2018-12-02
  */
 class Person extends Thing {
 
@@ -30,21 +30,33 @@ class Person extends Thing {
         this.setIsWorking(false);
     }
 
+    /**
+     * Returns working status.
+     * @return boolean
+     */
     boolean getIsWorking() {
         return this.isWorking;
     }
 
+    /**
+     * Sets working status.
+     * @param isWorking
+     */
     void setIsWorking(boolean isWorking) {
         this.isWorking = isWorking;
     }
 
     /**
-     * Return all jobs list.
+     * Returns skill.
      */
     String getSkill() {
         return this.skill;
     }
 
+    /**
+     * Sets a skill
+     * @param skill
+     */
     private void setSkill(String skill) {
         this.skill = skill;
     }
