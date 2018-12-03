@@ -1,6 +1,8 @@
 package edu.seaport;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,12 +15,12 @@ import static javax.swing.JOptionPane.showMessageDialog;
 
 /**
  * File SeaPortProgram.java
- * The SeaPortProgram implements an application that displays a GUI, allows a user to import a world file and
- * the user to scan said world file.
+ * The SeaPortProgram implements an application that displays a GUI, allows a user to import a world file, scan, view
+ * a tree and view job processing status.
  *
  * @author Lance Gundersen
- * @version 2.0
- * @since 2018-11-18
+ * @version 3.0
+ * @since 2018-12-02
  */
 
 class SeaPortProgram extends JFrame {
@@ -30,6 +32,8 @@ class SeaPortProgram extends JFrame {
     private JTextArea textOutput, resultsOutput;
     private TextField searchBox;
     private JComboBox<String> searchDropdown, sortDropdown;
+    private JTree coreTree;
+    private JPanel jobsOutput;
 
     /**
      * Default Constructor which creates the GUI along with providing click handlers for reading in a file and
@@ -52,6 +56,34 @@ class SeaPortProgram extends JFrame {
      */
     public static void main(String[] args) {
         new SeaPortProgram();
+    }
+
+    private void startAllJobs() {
+        for (SeaPort port : this.world.getPorts()) {
+            for (Dock dock : port.getDocks()) {
+                if (dock.getShip().getJobs().isEmpty()) {
+                    dock.setShip(null);
+                    while (!port.getQueue().isEmpty()) {
+                        Ship newShip = port.getQueue().remove(0);
+                        if (!newShip.getJobs().isEmpty()) {
+                            dock.setShip(newShip);
+                            break;
+                        }
+                    }
+                }
+                dock.getShip().setDock(dock);
+            }
+
+            for (Ship ship : port.getShips())
+                if (!ship.getJobs().isEmpty()) {
+                    for (Job job : ship.getJobs()) {
+                        this.jobsOutput.add(job.getJobAsPanel());
+                        this.jobsOutput.revalidate();
+                        this.jobsOutput.repaint();
+                        job.startJob();
+                    }
+                }
+        }
     }
 
     /**
@@ -193,6 +225,8 @@ class SeaPortProgram extends JFrame {
             }
             this.world = new World(scanner);
             this.textOutput.setText(this.world.toString());
+            this.coreTree.setModel(new DefaultTreeModel(this.world.toTree()));
+            this.startAllJobs();
         }
     }
 
@@ -208,22 +242,35 @@ class SeaPortProgram extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         JPanel panelTop = new JPanel(new GridLayout(1, 5, 5, 5));
         JPanel panelBottom = new JPanel(new GridLayout(1, 2));
-        panelBottom.setPreferredSize(new Dimension(500, 600));
+        JTabbedPane tabbedPane = new JTabbedPane();
+        panelBottom.setPreferredSize(new Dimension(1000, 600));
 
         // Main text output area styling
         this.textOutput = new JTextArea();
         this.textOutput.setEditable(false);
         this.textOutput.setFont(new java.awt.Font("Monospaced", Font.PLAIN, 12));
         this.textOutput.setLineWrap(true);
+        // Set Default Text
+        this.textOutput.setText("Please select a file to see the raw file displayed.");
 
         // Results text output area styling
         this.resultsOutput = new JTextArea();
         this.resultsOutput.setEditable(false);
         this.resultsOutput.setFont(new java.awt.Font("Monospaced", Font.PLAIN, 12));
         this.resultsOutput.setLineWrap(true);
-
-
+        // Set Default Text
+        this.resultsOutput.setText("Sort results are displayed here.");
         this.fileReadButton = new JButton("Select File");
+
+        // Tree View
+        this.coreTree = new JTree();
+        this.coreTree.setModel(null);
+        this.coreTree.getSelectionModel().setSelectionMode(
+                TreeSelectionModel.SINGLE_TREE_SELECTION
+        );
+
+        // Jobs View
+        this.jobsOutput = new JPanel(new GridLayout(0, 1));
 
         JLabel searchBoxLabel = new JLabel("Search:", JLabel.RIGHT);
         this.searchBox = new TextField("", 10);
@@ -239,6 +286,9 @@ class SeaPortProgram extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(this.textOutput);
         JScrollPane resultsPane = new JScrollPane(this.resultsOutput);
+        JScrollPane treePane = new JScrollPane(this.coreTree);
+        JScrollPane jobsPane = new JScrollPane(this.jobsOutput);
+        jobsPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         // Panel for the top menu bar
         panelTop.add(this.fileReadButton);
@@ -250,8 +300,11 @@ class SeaPortProgram extends JFrame {
         panelTop.add(this.sortDropdown);
         panelTop.add(this.sortButton);
 
-        panelBottom.add(scrollPane);
-        panelBottom.add(resultsPane);
+        tabbedPane.addTab("Raw Input File", scrollPane);
+        tabbedPane.addTab("Sorted Results", resultsPane);
+        tabbedPane.addTab("Tree View", treePane);
+        tabbedPane.addTab("Jobs", jobsPane);
+        panelBottom.add(tabbedPane);
 
         panel.add(panelTop, BorderLayout.NORTH);
         panel.add(panelBottom, BorderLayout.SOUTH);

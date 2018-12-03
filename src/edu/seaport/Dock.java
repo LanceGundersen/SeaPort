@@ -4,11 +4,11 @@ import java.util.Scanner;
 
 /**
  * File Dock.java
- * The dock class contains dock objects. As the project progresses the class will be added to.
+ * The dock class contains dock objects.
  *
  * @author Lance Gundersen
- * @version 1.0
- * @since 2018-11-03
+ * @version 1.1
+ * @since 2018-12-02
  */
 class Dock extends Thing {
 
@@ -33,6 +33,7 @@ class Dock extends Thing {
 
     /**
      * Set ship.
+     * @param ship Ship
      */
     void setShip(Ship ship) {
         this.ship = ship;
