@@ -8,8 +8,8 @@ import java.util.Scanner;
  * The seaport class contains arrays for docks, queue, ships and persons and provides synchronized threads for workers.
  *
  * @author Lance Gundersen
- * @version 2.0
- * @since 2018-12-02
+ * @version 3.0
+ * @since 2018-12-13
  */
 class SeaPort extends Thing {
 
@@ -39,32 +39,32 @@ class SeaPort extends Thing {
      * @return ArrayList of persons
      */
     synchronized ArrayList<Person> getResources(Job job) {
-        int counter;
-        ArrayList<Person> candidates;
-        boolean areAllRequirementsMet;
-        counter = this.checkForQualifiedWorkers(job.getRequirements());
-        candidates = new ArrayList<>();
-        areAllRequirementsMet = true;
-        if (counter < job.getRequirements().size()) return new ArrayList<>();
+        int counter = this.checkForQualifiedWorkers(job.getRequirements());
+        ArrayList<Person> candidates = new ArrayList<>();
+        boolean areAllRequirementsMet = true;
+
+        if (counter < job.getRequirements().size()) {
+            job.endJob();
+            return new ArrayList<>();
+        }
+
         outerLoop:
         for (String requirement : job.getRequirements()) {
-            for (Person person : this.getPersons()) {
+            for (Person person : this.getPersons())
                 if (person.getSkill().equals(requirement) && !person.getIsWorking()) {
                     person.setIsWorking(true);
                     candidates.add(person);
                     continue outerLoop;
                 }
-            }
             areAllRequirementsMet = false;
             break;
         }
-
         if (areAllRequirementsMet) {
+            for (Person candidate : candidates) candidate.updateWorkAvailability();
             return candidates;
-        } else {
-            this.returnResources(candidates);
-            return null;
         }
+        this.returnResources(candidates);
+        return null;
     }
 
     /**
@@ -74,7 +74,10 @@ class SeaPort extends Thing {
      * @return nothing
      */
     synchronized void returnResources(ArrayList<Person> resources) {
-        resources.forEach((worker) -> worker.setIsWorking(false));
+        for (Person worker : resources) {
+            worker.setIsWorking(false);
+            worker.updateWorkAvailability();
+        }
     }
 
     /**
@@ -84,15 +87,17 @@ class SeaPort extends Thing {
      * @return int counter
      */
     private synchronized int checkForQualifiedWorkers(ArrayList<String> requirements) {
+        ArrayList<Person> reservedPersons;
+        reservedPersons = new ArrayList<>();
         int counter = 0;
         outerLoop:
         for (String requirement : requirements) {
-            for (Person worker : this.getPersons()) {
-                if (requirement.equals(worker.getSkill())) {
+            for (Person worker : this.getPersons())
+                if (requirement.equals(worker.getSkill()) && !reservedPersons.contains(worker)) {
+                    reservedPersons.add(worker);
                     counter++;
                     continue outerLoop;
                 }
-            }
         }
         return counter;
     }
@@ -106,6 +111,7 @@ class SeaPort extends Thing {
 
     /**
      * Sets a list of Docks.
+     *
      * @param docks
      */
     private void setDocks(ArrayList<Dock> docks) {
@@ -121,6 +127,7 @@ class SeaPort extends Thing {
 
     /**
      * Sets a list of ships
+     *
      * @param ships
      */
     private void setShips(ArrayList<Ship> ships) {
@@ -136,6 +143,7 @@ class SeaPort extends Thing {
 
     /**
      * Sets a queue list
+     *
      * @param queue
      */
     private void setQueue(ArrayList<Ship> queue) {
@@ -151,6 +159,7 @@ class SeaPort extends Thing {
 
     /**
      * Sets a list of persons
+     *
      * @param persons
      */
     private void setPersons(ArrayList<Person> persons) {

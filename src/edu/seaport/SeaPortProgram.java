@@ -19,8 +19,8 @@ import static javax.swing.JOptionPane.showMessageDialog;
  * a tree and view job processing status.
  *
  * @author Lance Gundersen
- * @version 3.0
- * @since 2018-12-02
+ * @version 4.0
+ * @since 2018-12-13
  */
 
 class SeaPortProgram extends JFrame {
@@ -33,7 +33,7 @@ class SeaPortProgram extends JFrame {
     private TextField searchBox;
     private JComboBox<String> searchDropdown, sortDropdown;
     private JTree coreTree;
-    private JPanel jobsOutput;
+    private JPanel jobsOutput, resourcesOutput;
 
     /**
      * Default Constructor which creates the GUI along with providing click handlers for reading in a file and
@@ -58,6 +58,23 @@ class SeaPortProgram extends JFrame {
         new SeaPortProgram();
     }
 
+    /**
+     * Method for adding workers/resources statuses to panel
+     *
+     * @return Nothing.
+     */
+    private void addWorkersStatus() {
+        this.world.getPorts().forEach((SeaPort port) -> port.getPersons().forEach((Person person) -> {
+            this.resourcesOutput.add(person.getPersonAsPanel());
+        }));
+    }
+
+
+    /**
+     * Starts processing the jobs
+     *
+     * @return none
+     */
     private void startAllJobs() {
         for (SeaPort port : this.world.getPorts()) {
             for (Dock dock : port.getDocks()) {
@@ -92,7 +109,6 @@ class SeaPortProgram extends JFrame {
      * @return Nothing.
      */
     private void sortBuilder() {
-        // Check if world has data.
         if (this.world != null) {
 
             if (this.resultsOutput != null)
@@ -226,6 +242,7 @@ class SeaPortProgram extends JFrame {
             this.world = new World(scanner);
             this.textOutput.setText(this.world.toString());
             this.coreTree.setModel(new DefaultTreeModel(this.world.toTree()));
+            this.addWorkersStatus();
             this.startAllJobs();
         }
     }
@@ -271,7 +288,8 @@ class SeaPortProgram extends JFrame {
 
         // Jobs View
         this.jobsOutput = new JPanel(new GridLayout(0, 1));
-
+        // Resources View
+        this.resourcesOutput = new JPanel(new GridLayout(0, 10));
         JLabel searchBoxLabel = new JLabel("Search:", JLabel.RIGHT);
         this.searchBox = new TextField("", 10);
         String[] searchOptions = new String[]{"", "Name", "Index", "Skill"};
@@ -289,6 +307,7 @@ class SeaPortProgram extends JFrame {
         JScrollPane treePane = new JScrollPane(this.coreTree);
         JScrollPane jobsPane = new JScrollPane(this.jobsOutput);
         jobsPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane resourcesPane = new JScrollPane(this.resourcesOutput);
 
         // Panel for the top menu bar
         panelTop.add(this.fileReadButton);
@@ -304,6 +323,7 @@ class SeaPortProgram extends JFrame {
         tabbedPane.addTab("Sorted Results", resultsPane);
         tabbedPane.addTab("Tree View", treePane);
         tabbedPane.addTab("Jobs", jobsPane);
+        tabbedPane.addTab("Resources", resourcesPane);
         panelBottom.add(tabbedPane);
 
         panel.add(panelTop, BorderLayout.NORTH);

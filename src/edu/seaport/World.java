@@ -16,8 +16,8 @@ import static java.lang.String.CASE_INSENSITIVE_ORDER;
  * file trees.
  *
  * @author Lance Gundersen
- * @version 3
- * @since 2018-12-02
+ * @version 4.0
+ * @since 2018-12-13
  */
 class World extends Thing {
 
@@ -130,6 +130,7 @@ class World extends Thing {
 
     /**
      * Set all world list.
+     *
      * @param allThings
      */
     private void setWorld(ArrayList<Thing> allThings) {
@@ -145,6 +146,7 @@ class World extends Thing {
 
     /**
      * Set ports list.
+     *
      * @param ports
      */
     private void setPorts(ArrayList<SeaPort> ports) {
@@ -198,7 +200,7 @@ class World extends Thing {
                         shipsMap.put(newCargoShip.getIndex(), newCargoShip);
                         break;
                     case "person":
-                        Person newPerson = new Person(lineContents);
+                        Person newPerson = new Person(lineContents, portsMap);
                         this.getWorld().add(newPerson);
                         this.addThingToList(portsMap, newPerson, "getPersons");
                         break;
@@ -218,8 +220,8 @@ class World extends Thing {
     /**
      * This method adds things to a list.
      *
-     * @param portsMap is the ports hashmap
-     * @param newThing is a new thing
+     * @param portsMap   is the ports hashmap
+     * @param newThing   is a new thing
      * @param methodName is the declared method name
      * @return Nothing.
      */
@@ -246,7 +248,7 @@ class World extends Thing {
     /**
      * This method checks for moored ships and adds the job to said ship.
      *
-     * @param newJob is the new job
+     * @param newJob   is the new job
      * @param shipsMap is the ships hashmap
      * @param docksMap is the docks hashmap
      * @return Nothing.
@@ -266,7 +268,7 @@ class World extends Thing {
     /**
      * This method adds a ship to a queue or to a dock code.
      *
-     * @param newShip is the new job
+     * @param newShip  is the new job
      * @param docksMap is the docks hashmap
      * @param portsMap is the ports hashmap
      * @return Nothing.
@@ -292,7 +294,8 @@ class World extends Thing {
      *
      * @return DefaultMutableTreeNode.
      */
-    @SuppressWarnings("unchecked") // No other way I have found besides suppressing the warning.
+    @SuppressWarnings("unchecked")
+    // No other way I have found besides suppressing the warning.
     <T extends Thing> DefaultMutableTreeNode toTree() {
         DefaultMutableTreeNode parentNode, childNode;
         Method getList;
@@ -334,7 +337,7 @@ class World extends Thing {
     /**
      * This method returns a tree branch of each SeaPort.
      *
-     * @param title variable to set the title of the branch
+     * @param title      variable to set the title of the branch
      * @param thingsList the contents of an ArrayList
      * @return DefaultMutableTreeNode.
      */

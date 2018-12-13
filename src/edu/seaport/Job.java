@@ -13,8 +13,8 @@ import java.util.Scanner;
  * support returning job status to the GUI in the format of a panel.
  *
  * @author Lance Gundersen
- * @version 2.0
- * @since 2018-12-02
+ * @version 3.0
+ * @since 2018-12-13
  */
 final class Job extends Thing implements Runnable {
     private double duration;
@@ -29,8 +29,9 @@ final class Job extends Thing implements Runnable {
 
     /**
      * Default Constructor.
+     *
      * @param scannerContents is the file contents to be scanned.
-     * @param shipsMap ships hashmap
+     * @param shipsMap        ships hashmap
      * @return Nothing.
      */
     Job(Scanner scannerContents, HashMap<Integer, Ship> shipsMap) {
@@ -45,18 +46,24 @@ final class Job extends Thing implements Runnable {
         this.setIsCancelled(false);
         this.setIsFinished(false);
         this.setJobThread(new Thread(this));
-        this.setIsEndex();
+        this.setIsEndex(false);
     }
 
+
     /**
-     * Sets endex.
+     * Triggers the ending of a job
+     *
+     * @return  none
      */
-    private void setIsEndex() {
-        this.isEndex = false;
+    void endJob() {
+        this.toggleCancelFlag();
+        this.setIsEndex(true);
     }
 
     /**
      * Return job duration.
+     *
+     * @return duration
      */
     private double getDuration() {
         return this.duration;
@@ -206,6 +213,20 @@ final class Job extends Thing implements Runnable {
         return this.isEndex;
     }
 
+    /**
+     * Sets boolean.
+     *
+     * @param isEndex endex
+     */
+    private void setIsEndex(boolean isEndex) {
+        this.isEndex = isEndex;
+    }
+
+    /**
+     * Creates jobs panel for injection into the scroll tab.
+     *
+     * @return rowPanel panel row
+     */
     JPanel getJobAsPanel() {
         JPanel rowPanel = new JPanel(new GridLayout(1, 4));
         JLabel rowLabel = new JLabel(this.getName() + " (" + this.getParentShip().getName() + ")", JLabel.CENTER);
@@ -308,8 +329,6 @@ final class Job extends Thing implements Runnable {
      */
     public void run() {
         ArrayList<Boolean> statusList;
-        Ship newShipToMoor;
-        Dock parentDock;
         long time = System.currentTimeMillis();
         long startTime = time;
         long stopTime = time + 1000 * (long) this.getDuration();
@@ -358,10 +377,10 @@ final class Job extends Thing implements Runnable {
 
             if (!statusList.contains(false)) {
                 while (!this.getParentPort().getQueue().isEmpty()) {
-                    newShipToMoor = this.getParentPort().getQueue().remove(0);
+                    Ship newShipToMoor = this.getParentPort().getQueue().remove(0);
 
                     if (!newShipToMoor.getJobs().isEmpty()) {
-                        parentDock = this.getParentShip().getDock();
+                        Dock parentDock = this.getParentShip().getDock();
                         parentDock.setShip(newShipToMoor);
                         newShipToMoor.setDock(parentDock);
                         break;
