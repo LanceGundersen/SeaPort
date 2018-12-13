@@ -69,7 +69,7 @@ class Person extends Thing {
         portLabel.setBackground(Color.WHITE);
         this.personsReadyLabel.setBackground(Color.WHITE);
         this.personsTotalLabel.setBackground(Color.WHITE);
-        this.statusLabel.setBackground(Color.GREEN);
+        this.statusLabel.setBackground(Color.decode("#2EC4B6"));
 
         rowPanel.add(nameLabel);
         rowPanel.add(skillLabel);
@@ -88,10 +88,10 @@ class Person extends Thing {
      */
     void updateWorkAvailability() {
         if (this.getIsWorking()) {
-            this.statusLabel.setBackground(Color.RED);
+            this.statusLabel.setBackground(Color.decode("#D81159"));
             this.statusLabel.setText("Unavailable");
         } else {
-            this.statusLabel.setBackground(Color.GREEN);
+            this.statusLabel.setBackground(Color.decode("#2EC4B6"));
             this.statusLabel.setText("Available");
         }
     }
